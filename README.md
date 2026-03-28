@@ -1,2 +1,2 @@
 # sciat-frontend
-SCIAT peal State - App web y móvil 
+SCIAT peak State - App web y móvil 
