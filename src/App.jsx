@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 
-// ─── TEMA OSCURO ORIGINAL SCIAT ───────────────────────────────────────────────
+// ─── TEMA OSCURO SCIAT — FORZADO EN TODOS LOS DISPOSITIVOS ───────────────────
 const DS = {
   bg:            "#0a0f1e",
   surface:       "#111827",
@@ -18,7 +18,6 @@ const DS = {
   border:        "#1e2d45",
   danger:        "#ef4444",
   warn:          "#f59e0b",
-  success:       "#00d4aa",
 };
 
 const MOD = {
@@ -36,6 +35,46 @@ const MODULOS = [
   { id:"D", icono:"🎯", titulo:"Foco y Concentración", desc:"Ancla tu atención al presente" },
   { id:"E", icono:"📊", titulo:"Seguimiento y Evolución", desc:"Después de tu etapa" },
 ];
+
+// ─── RUTAS DE AUDIO ───────────────────────────────────────────────────────────
+// Los archivos están en: src/assets/audio/es/modulo-A/
+const AUDIO = {
+  A1: {
+    intro: "/src/assets/audio/es/modulo-A/modulo-A_ej1_intro.m4a",
+    pasos: [
+      "/src/assets/audio/es/modulo-A/modulo-A_ej1_p1.m4a",
+      "/src/assets/audio/es/modulo-A/modulo-A_ej1_p2.m4a",
+      "/src/assets/audio/es/modulo-A/modulo-A_ej1_p3.m4a",
+      "/src/assets/audio/es/modulo-A/modulo-A_ej1_p4.m4a",
+      "/src/assets/audio/es/modulo-A/modulo-A_ej1_p5.m4a",
+      "/src/assets/audio/es/modulo-A/modulo-A_ej1_p6.m4a",
+      "/src/assets/audio/es/modulo-A/modulo-A_ej1_p7.m4a",
+    ]
+  },
+  A2: {
+    intro: "/src/assets/audio/es/modulo-A/modulo-A_ej2_intro.m4a",
+    pasos: [
+      "/src/assets/audio/es/modulo-A/modulo-A_ej2_p1.m4a",
+      "/src/assets/audio/es/modulo-A/modulo-A_ej2_p2.m4a",
+      "/src/assets/audio/es/modulo-A/modulo-A_ej2_p3.m4a",
+      "/src/assets/audio/es/modulo-A/modulo-A_ej2_p4.m4a",
+      "/src/assets/audio/es/modulo-A/modulo-A_ej2_p5.m4a",
+      "/src/assets/audio/es/modulo-A/modulo-A_ej2_p6.m4a",
+      "/src/assets/audio/es/modulo-A/modulo-A_ej2_p7.m4a",
+      "/src/assets/audio/es/modulo-A/modulo-A_ej2_p8.m4a",
+    ]
+  },
+  A3: {
+    intro: "/src/assets/audio/es/modulo-A/modulo-A_ej3_intro.m4a",
+    pasos: [
+      "/src/assets/audio/es/modulo-A/modulo-A_ej3_p1.m4a",
+      "/src/assets/audio/es/modulo-A/modulo-A_ej3_p2.m4a",
+      "/src/assets/audio/es/modulo-A/modulo-A_ej3_p3.m4a",
+      "/src/assets/audio/es/modulo-A/modulo-A_ej3_p4.m4a",
+      "/src/assets/audio/es/modulo-A/modulo-A_ej3_p5.m4a",
+    ]
+  },
+};
 
 const EJERCICIOS = {
   A: [
@@ -218,16 +257,13 @@ function Header({ pantalla, onHome }) {
 }
 
 // ─── PANTALLA INICIO ──────────────────────────────────────────────────────────
-function PantallaInicio({ onIniciar, onModulo }) {
-  const hora = new Date().getHours();
-  const saludo = hora < 12 ? "Buenos días" : hora < 19 ? "Buenas tardes" : "Buenas noches";
-
+function PantallaInicio({ onIniciar }) {
   return (
     <div>
-      {/* Saludo */}
+      {/* Saludo cercano */}
       <div style={{marginBottom:24}}>
-        <h1 style={{fontSize:30,fontWeight:300,color:DS.ink,fontFamily:"'Cormorant Garamond', serif",lineHeight:1.2,marginBottom:4}}>
-          {saludo},<br/>
+        <h1 style={{fontSize:32,fontWeight:300,color:DS.ink,fontFamily:"'Cormorant Garamond', serif",lineHeight:1.2,marginBottom:4}}>
+          Hola,<br/>
           <span style={{fontWeight:700,color:DS.emerald,fontStyle:"italic"}}>¿cómo estás hoy?</span>
         </h1>
         <div style={{fontSize:12,color:DS.inkMuted,fontFamily:"'DM Mono', monospace",letterSpacing:1}}>
@@ -235,46 +271,31 @@ function PantallaInicio({ onIniciar, onModulo }) {
         </div>
       </div>
 
-      {/* CTA principal */}
-      <div style={{background:`linear-gradient(135deg, ${DS.card}, #0d1520)`,border:`1px solid ${DS.border}`,borderRadius:20,padding:28,marginBottom:20,position:"relative",overflow:"hidden"}}>
+      {/* Check inicial prominente */}
+      <div style={{background:`linear-gradient(135deg, ${DS.card}, #0d1520)`,border:`1px solid ${DS.emeraldBorder}`,borderRadius:20,padding:28,marginBottom:16,position:"relative",overflow:"hidden"}}>
         <div style={{position:"absolute",top:-40,right:-40,width:160,height:160,borderRadius:"50%",background:`radial-gradient(circle, ${DS.emeraldSoft} 0%, transparent 70%)`}}/>
         <div style={{position:"absolute",bottom:-30,left:-30,width:120,height:120,borderRadius:"50%",background:`radial-gradient(circle, ${DS.goldSoft} 0%, transparent 70%)`}}/>
-        <div style={{fontSize:48,marginBottom:12}}>⚡</div>
-        <h2 style={{fontSize:26,fontWeight:700,color:DS.ink,fontFamily:"'Cormorant Garamond', serif",lineHeight:1.2,marginBottom:8}}>
-          Rinde mejor<br/><span style={{color:DS.emerald,fontStyle:"italic"}}>bajo presión</span>
-        </h2>
-        <p style={{fontSize:13,color:DS.inkMuted,fontFamily:"'DM Sans', sans-serif",lineHeight:1.6,marginBottom:20}}>
-          Herramientas de alto rendimiento adaptadas a tu etapa. Deporte, academia u organización — el método es el mismo.
-        </p>
-        <div style={{marginBottom:20}}>
-          {["Evaluación por etapa de presión","Check inicial de estado","IA que aprende tu patrón"].map((f,i) => (
-            <div key={i} style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
-              <span style={{color:DS.emerald,fontSize:14}}>✓</span>
-              <span style={{fontSize:13,color:DS.inkMuted,fontFamily:"'DM Sans', sans-serif"}}>{f}</span>
-            </div>
-          ))}
+
+        <div style={{fontSize:11,color:DS.gold,fontFamily:"'DM Mono', monospace",letterSpacing:2,marginBottom:10}}>
+          CHECK INICIAL
         </div>
+        <h2 style={{fontSize:22,fontWeight:700,color:DS.ink,fontFamily:"'Cormorant Garamond', serif",lineHeight:1.3,marginBottom:8}}>
+          Evalúa tu estado<br/>
+          <span style={{color:DS.emerald,fontStyle:"italic"}}>y recibe tu plan</span>
+        </h2>
+        <p style={{fontSize:13,color:DS.inkMuted,fontFamily:"'DM Sans', sans-serif",lineHeight:1.6,marginBottom:16}}>
+          3 pasos · Personalizado para tu etapa de presión
+        </p>
+
+        {/* Indicador de audio */}
+        <div style={{display:"flex",alignItems:"center",gap:8,background:"rgba(0,212,170,0.08)",borderRadius:8,padding:"8px 12px",marginBottom:20,border:`1px solid ${DS.emeraldBorder}`}}>
+          <span style={{fontSize:16}}>🎙️</span>
+          <span style={{fontSize:12,color:DS.emerald,fontFamily:"'DM Sans', sans-serif"}}>Audio con voz del autor disponible en Módulo A</span>
+        </div>
+
         <button onClick={onIniciar} style={{width:"100%",padding:16,borderRadius:12,border:"none",background:`linear-gradient(135deg, ${DS.emerald}, #0099aa)`,color:DS.bg,fontSize:15,fontWeight:700,cursor:"pointer",fontFamily:"'DM Sans', sans-serif",letterSpacing:0.5}}>
           COMENZAR EVALUACIÓN →
         </button>
-      </div>
-
-      {/* Módulos */}
-      <div style={{fontSize:11,color:DS.inkMuted,fontFamily:"'DM Mono', monospace",letterSpacing:2,marginBottom:14}}>MÓDULOS</div>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:16}}>
-        {MODULOS.map(m => {
-          const mc = MOD[m.id];
-          return (
-            <div key={m.id} onClick={() => onModulo(m.id)}
-              style={{background:DS.card,border:`1px solid ${DS.border}`,borderRadius:14,padding:16,cursor:"pointer",transition:"border-color 0.2s"}}
-              onMouseEnter={e => e.currentTarget.style.borderColor=mc.accent}
-              onMouseLeave={e => e.currentTarget.style.borderColor=DS.border}>
-              <div style={{fontSize:22,marginBottom:8}}>{m.icono}</div>
-              <div style={{fontSize:10,color:mc.accent,fontFamily:"'DM Mono', monospace",letterSpacing:1,marginBottom:3}}>MOD {m.id}</div>
-              <div style={{fontSize:13,fontWeight:700,color:DS.ink,fontFamily:"'DM Sans', sans-serif"}}>{mc.label}</div>
-            </div>
-          );
-        })}
       </div>
 
       {/* Accesibilidad */}
@@ -314,15 +335,14 @@ function PantallaCheck({ onCompletado }) {
 
   const calcular = () => {
     const avg = ids => ids.reduce((s,id) => s+(resp[id]||2),0)/ids.length;
-    const som = avg(["s1","s2"]);
-    const cog = avg(["c1","c2"]);
-    const con = avg(["f1","f2"]);
     const niv = (v,inv=false) => {
       if(inv) return v>=3.5?"buena":v>=2.5?"moderada":"baja";
       return v>=3.5?"alta":v>=2.5?"media":"baja";
     };
     return {
-      somatica:niv(som), cognitiva:niv(cog), confianza:niv(con,true),
+      somatica:niv(avg(["s1","s2"])),
+      cognitiva:niv(avg(["c1","c2"])),
+      confianza:niv(avg(["f1","f2"]),true),
       contexto:CONTEXTOS.find(c=>c.id===contexto)?.label,
       fase:FASES.find(f=>f.id===fase)?.label,
     };
@@ -492,31 +512,60 @@ function PantallaPerfilPlan({ perfil, onModulo }) {
   );
 }
 
-// ─── EJERCICIO CON TEMPORIZADOR ───────────────────────────────────────────────
+// ─── EJERCICIO CON AUDIO + TEMPORIZADOR ───────────────────────────────────────
 function EjercicioActivo({ ejercicio, moduloId, onVolver }) {
   const mc = MOD[moduloId];
-  const [paso, setPaso] = useState(0);
-  const [segundos, setSegundos] = useState(ejercicio.pasos[0].s);
+  const [paso, setPaso] = useState(-1); // -1 = intro
+  const [segundos, setSegundos] = useState(0);
   const [corriendo, setCorriendo] = useState(false);
   const [completado, setCompletado] = useState(false);
   const [subtCC, setSubtCC] = useState(true);
-  const ref = useRef(null);
+  const [audioOn, setAudioOn] = useState(true);
+  const timerRef = useRef(null);
+  const audioRef = useRef(null);
+
+  const audioData = AUDIO[ejercicio.id];
+  const tieneAudio = !!audioData;
+
+  const reproducirAudio = (src) => {
+    if(!audioOn || !src) return;
+    if(audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
+    const a = new Audio(src);
+    audioRef.current = a;
+    a.play().catch(() => {});
+  };
+
+  const detenerAudio = () => {
+    if(audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
+  };
 
   useEffect(() => {
-    return () => clearInterval(ref.current);
+    // Al montar — reproducir intro si existe
+    if(paso === -1 && tieneAudio && audioOn) {
+      reproducirAudio(audioData.intro);
+    }
   }, []);
 
-  const iniciar = () => {
+  useEffect(() => {
+    return () => { clearInterval(timerRef.current); detenerAudio(); };
+  }, []);
+
+  const iniciarPaso = (numPaso) => {
+    const duracion = ejercicio.pasos[numPaso].s;
+    setSegundos(duracion);
     setCorriendo(true);
-    ref.current = setInterval(() => {
+    if(tieneAudio && audioData.pasos[numPaso]) {
+      reproducirAudio(audioData.pasos[numPaso]);
+    }
+    clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
       setSegundos(s => {
         if(s <= 1) {
-          clearInterval(ref.current);
-          const sig = paso + 1;
+          clearInterval(timerRef.current);
+          const sig = numPaso + 1;
           if(sig < ejercicio.pasos.length) {
             setPaso(sig);
-            setSegundos(ejercicio.pasos[sig].s);
-            setCorriendo(false);
+            iniciarPaso(sig);
           } else {
             setCorriendo(false);
             setCompletado(true);
@@ -528,8 +577,23 @@ function EjercicioActivo({ ejercicio, moduloId, onVolver }) {
     }, 1000);
   };
 
-  const pausar = () => { clearInterval(ref.current); setCorriendo(false); };
-  const reiniciar = () => { clearInterval(ref.current); setPaso(0); setSegundos(ejercicio.pasos[0].s); setCorriendo(false); setCompletado(false); };
+  const handleIniciar = () => {
+    detenerAudio();
+    setPaso(0);
+    iniciarPaso(0);
+  };
+
+  const pausar = () => { clearInterval(timerRef.current); setCorriendo(false); detenerAudio(); };
+
+  const continuar = () => {
+    iniciarPaso(paso);
+  };
+
+  const reiniciar = () => {
+    clearInterval(timerRef.current); detenerAudio();
+    setPaso(-1); setSegundos(0); setCorriendo(false); setCompletado(false);
+    if(tieneAudio && audioOn) reproducirAudio(audioData.intro);
+  };
 
   if(completado) return (
     <div style={{textAlign:"center",padding:"40px 0"}}>
@@ -542,72 +606,109 @@ function EjercicioActivo({ ejercicio, moduloId, onVolver }) {
   );
 
   const radio=44, circ=2*Math.PI*radio;
-  const durPaso = ejercicio.pasos[paso].s;
-  const progreso = ((durPaso - segundos) / durPaso) * circ;
+  const durPaso = paso >= 0 ? ejercicio.pasos[paso].s : 1;
+  const progreso = paso >= 0 ? ((durPaso - segundos) / durPaso) * circ : 0;
+  const textoActual = paso >= 0 ? ejercicio.pasos[paso].t : "Escucha la introducción y pulsa INICIAR cuando estés listo.";
 
   return (
     <div>
+      {/* Header ejercicio */}
       <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:20}}>
         <button onClick={onVolver} style={{background:"transparent",border:`1px solid ${DS.border}`,borderRadius:8,padding:"6px 12px",color:DS.inkMuted,fontSize:13,cursor:"pointer"}}>←</button>
         <div>
           <div style={{fontSize:14,fontWeight:700,color:DS.ink,fontFamily:"'DM Sans', sans-serif"}}>{ejercicio.titulo}</div>
-          <div style={{fontSize:11,color:DS.inkMuted,fontFamily:"'DM Mono', monospace"}}>Paso {paso+1} de {ejercicio.pasos.length}</div>
-        </div>
-        <button onClick={() => setSubtCC(!subtCC)} aria-pressed={subtCC}
-          style={{marginLeft:"auto",background:subtCC?mc.soft:"transparent",border:`1px solid ${subtCC?mc.accent:DS.border}`,borderRadius:8,padding:"6px 10px",color:subtCC?mc.accent:DS.inkMuted,fontSize:11,cursor:"pointer",fontFamily:"'DM Mono', monospace",letterSpacing:1}}>CC</button>
-      </div>
-
-      <div style={{height:3,background:DS.border,borderRadius:2,marginBottom:20}}>
-        <div style={{height:"100%",background:mc.accent,borderRadius:2,width:`${((paso+1)/ejercicio.pasos.length)*100}%`,transition:"width 0.5s"}}/>
-      </div>
-
-      <div style={{background:DS.card,border:`1px solid ${DS.border}`,borderRadius:16,padding:24,textAlign:"center",marginBottom:12}}>
-        <div style={{fontSize:11,color:mc.accent,fontFamily:"'DM Mono', monospace",letterSpacing:2,marginBottom:16}}>
-          PASO {paso+1} · {ejercicio.titulo.toUpperCase()}
-        </div>
-
-        <div style={{display:"flex",justifyContent:"center",margin:"0 0 20px"}}>
-          <div style={{position:"relative",width:104,height:104}}>
-            <svg width={104} height={104} style={{transform:"rotate(-90deg)"}}>
-              <circle cx={52} cy={52} r={radio} fill="none" stroke={DS.border} strokeWidth={5}/>
-              <circle cx={52} cy={52} r={radio} fill="none" stroke={mc.accent} strokeWidth={5}
-                strokeDasharray={circ} strokeDashoffset={circ - progreso}
-                strokeLinecap="round" style={{transition:"stroke-dashoffset 1s linear"}}/>
-            </svg>
-            <div style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
-              <div style={{fontSize:28,fontWeight:800,color:mc.accent,fontFamily:"'DM Mono', monospace"}}>{segundos}</div>
-              <div style={{fontSize:9,color:DS.inkMuted,fontFamily:"'DM Mono', monospace",letterSpacing:1}}>SEG</div>
-            </div>
+          <div style={{fontSize:11,color:DS.inkMuted,fontFamily:"'DM Mono', monospace"}}>
+            {paso === -1 ? "Introducción" : `Paso ${paso+1} de ${ejercicio.pasos.length}`}
           </div>
         </div>
+        <div style={{marginLeft:"auto",display:"flex",gap:6}}>
+          {tieneAudio && (
+            <button onClick={() => { setAudioOn(!audioOn); if(audioOn) detenerAudio(); }}
+              style={{background:audioOn?mc.soft:"transparent",border:`1px solid ${audioOn?mc.accent:DS.border}`,borderRadius:8,padding:"6px 10px",color:audioOn?mc.accent:DS.inkMuted,fontSize:14,cursor:"pointer"}}>
+              {audioOn?"🔊":"🔇"}
+            </button>
+          )}
+          <button onClick={() => setSubtCC(!subtCC)} aria-pressed={subtCC}
+            style={{background:subtCC?mc.soft:"transparent",border:`1px solid ${subtCC?mc.accent:DS.border}`,borderRadius:8,padding:"6px 10px",color:subtCC?mc.accent:DS.inkMuted,fontSize:11,cursor:"pointer",fontFamily:"'DM Mono', monospace",letterSpacing:1}}>CC</button>
+        </div>
+      </div>
 
-        <p role="status" aria-live="polite" style={{fontSize:15,color:DS.ink,lineHeight:1.8,marginBottom:24,fontFamily:"'DM Sans', sans-serif"}}>
-          {ejercicio.pasos[paso].t}
+      {/* Barra de progreso */}
+      <div style={{height:3,background:DS.border,borderRadius:2,marginBottom:20}}>
+        <div style={{height:"100%",background:mc.accent,borderRadius:2,
+          width:paso>=0?`${((paso+1)/ejercicio.pasos.length)*100}%`:"0%",transition:"width 0.5s"}}/>
+      </div>
+
+      {/* Contenido paso */}
+      <div style={{background:DS.card,border:`1px solid ${DS.border}`,borderRadius:16,padding:24,textAlign:"center",marginBottom:12}}>
+        <div style={{fontSize:11,color:mc.accent,fontFamily:"'DM Mono', monospace",letterSpacing:2,marginBottom:16}}>
+          {paso === -1 ? "INTRODUCCIÓN" : `PASO ${paso+1} · ${ejercicio.titulo.toUpperCase()}`}
+        </div>
+
+        {/* Temporizador — solo visible durante pasos */}
+        {paso >= 0 && (
+          <div style={{display:"flex",justifyContent:"center",margin:"0 0 20px"}}>
+            <div style={{position:"relative",width:104,height:104}}>
+              <svg width={104} height={104} style={{transform:"rotate(-90deg)"}}>
+                <circle cx={52} cy={52} r={radio} fill="none" stroke={DS.border} strokeWidth={5}/>
+                <circle cx={52} cy={52} r={radio} fill="none" stroke={mc.accent} strokeWidth={5}
+                  strokeDasharray={circ} strokeDashoffset={circ - progreso}
+                  strokeLinecap="round" style={{transition:"stroke-dashoffset 1s linear"}}/>
+              </svg>
+              <div style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+                <div style={{fontSize:28,fontWeight:800,color:mc.accent,fontFamily:"'DM Mono', monospace"}}>{segundos}</div>
+                <div style={{fontSize:9,color:DS.inkMuted,fontFamily:"'DM Mono', monospace",letterSpacing:1}}>SEG</div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Texto del paso */}
+        <p role="status" aria-live="polite"
+          style={{fontSize:15,color:DS.ink,lineHeight:1.8,marginBottom:24,fontFamily:"'DM Sans', sans-serif"}}>
+          {textoActual}
         </p>
 
-        {!corriendo ? (
-          <button onClick={iniciar} style={{width:"100%",padding:14,borderRadius:12,border:"none",background:`linear-gradient(135deg, ${mc.accent}, ${mc.accent}cc)`,color:DS.bg,fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"'DM Sans', sans-serif"}}>
-            ▶ {paso===0?"INICIAR":"CONTINUAR"}
+        {/* Botones de control */}
+        {paso === -1 && (
+          <button onClick={handleIniciar}
+            style={{width:"100%",padding:14,borderRadius:12,border:"none",background:`linear-gradient(135deg, ${mc.accent}, ${mc.accent}cc)`,color:DS.bg,fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"'DM Sans', sans-serif"}}>
+            ▶ INICIAR EJERCICIO
           </button>
-        ) : (
-          <button onClick={pausar} style={{width:"100%",padding:14,borderRadius:12,border:`1px solid ${DS.border}`,background:"transparent",color:DS.ink,fontSize:14,cursor:"pointer",fontFamily:"'DM Sans', sans-serif"}}>
+        )}
+
+        {paso >= 0 && !corriendo && (
+          <button onClick={continuar}
+            style={{width:"100%",padding:14,borderRadius:12,border:"none",background:`linear-gradient(135deg, ${mc.accent}, ${mc.accent}cc)`,color:DS.bg,fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"'DM Sans', sans-serif"}}>
+            ▶ CONTINUAR
+          </button>
+        )}
+
+        {paso >= 0 && corriendo && (
+          <button onClick={pausar}
+            style={{width:"100%",padding:14,borderRadius:12,border:`1px solid ${DS.border}`,background:"transparent",color:DS.ink,fontSize:14,cursor:"pointer",fontFamily:"'DM Sans', sans-serif"}}>
             ⏸ PAUSAR
           </button>
         )}
       </div>
 
+      {/* Subtítulos CC */}
       {subtCC && (
-        <div role="status" aria-live="polite" style={{background:mc.soft,borderRadius:10,padding:"10px 16px",margin:"12px 0",border:`1px solid ${mc.border}`}}>
+        <div role="status" aria-live="polite"
+          style={{background:mc.soft,borderRadius:10,padding:"10px 16px",margin:"12px 0",border:`1px solid ${mc.border}`}}>
           <div style={{fontSize:10,color:mc.accent,fontFamily:"'DM Mono', monospace",letterSpacing:1,marginBottom:4}}>CC</div>
-          <p style={{fontSize:14,color:DS.ink,lineHeight:1.6,margin:0,fontFamily:"'DM Sans', sans-serif"}}>{ejercicio.pasos[paso].t}</p>
+          <p style={{fontSize:14,color:DS.ink,lineHeight:1.6,margin:0,fontFamily:"'DM Sans', sans-serif"}}>{textoActual}</p>
         </div>
       )}
 
-      <div style={{display:"flex",gap:5,justifyContent:"center",marginTop:16}}>
-        {ejercicio.pasos.map((_,i) => (
-          <div key={i} style={{width:i===paso?18:6,height:6,borderRadius:3,background:i<=paso?mc.accent:DS.border,transition:"all 0.3s"}}/>
-        ))}
-      </div>
+      {/* Indicador de pasos */}
+      {paso >= 0 && (
+        <div style={{display:"flex",gap:5,justifyContent:"center",marginTop:16}}>
+          {ejercicio.pasos.map((_,i) => (
+            <div key={i} style={{width:i===paso?18:6,height:6,borderRadius:3,background:i<=paso?mc.accent:DS.border,transition:"all 0.3s"}}/>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -618,6 +719,7 @@ function PantallaModulo({ moduloId, onVolver }) {
   const mod = MODULOS.find(m => m.id===moduloId);
   const ejercicios = EJERCICIOS[moduloId] || [];
   const [seleccionado, setSeleccionado] = useState(null);
+  const tieneAudio = moduloId === "A";
 
   if(seleccionado) return (
     <EjercicioActivo ejercicio={seleccionado} moduloId={moduloId} onVolver={() => setSeleccionado(null)}/>
@@ -635,42 +737,42 @@ function PantallaModulo({ moduloId, onVolver }) {
           </div>
         </div>
         <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
-          {[mc.label,"Todos los contextos","🎙️ Audio"].map((tag,i) => (
-            <div key={i} style={{fontSize:9,color:i===0?mc.accent:DS.inkMuted,background:i===0?mc.soft:DS.surface,padding:"4px 8px",borderRadius:10,fontFamily:"'DM Mono', monospace",letterSpacing:0.5,border:`1px solid ${i===0?mc.border:DS.border}`}}>{tag}</div>
+          {[mc.label, "Todos los contextos", tieneAudio?"🎙️ Audio del autor":"Sin audio aún"].map((tag,i) => (
+            <div key={i} style={{fontSize:9,color:i===2&&tieneAudio?DS.gold:i===0?mc.accent:DS.inkMuted,background:i===2&&tieneAudio?DS.goldSoft:i===0?mc.soft:DS.surface,padding:"4px 8px",borderRadius:10,fontFamily:"'DM Mono', monospace",letterSpacing:0.5,border:`1px solid ${i===2&&tieneAudio?DS.goldSoft:i===0?mc.border:DS.border}`}}>{tag}</div>
           ))}
         </div>
-      </div>
-
-      <div style={{background:DS.surface,border:`1px solid ${DS.border}`,borderRadius:12,padding:"12px 16px",marginBottom:20,display:"flex",alignItems:"center",gap:10}}>
-        <span style={{fontSize:16}}>♿</span>
-        <span style={{fontSize:11,color:DS.inkMuted,fontFamily:"'DM Sans', sans-serif"}}>Subtítulos CC activos · Compatible con lector de pantalla</span>
       </div>
 
       <div style={{fontSize:11,color:DS.inkMuted,fontFamily:"'DM Mono', monospace",letterSpacing:2,marginBottom:14}}>
         EJERCICIOS — {ejercicios.length} disponibles
       </div>
 
-      {ejercicios.map(ej => (
-        <div key={ej.id} onClick={() => setSeleccionado(ej)}
-          style={{background:DS.card,border:`1px solid ${DS.border}`,borderRadius:14,padding:18,marginBottom:10,cursor:"pointer",transition:"border-color 0.2s"}}
-          onMouseEnter={e => e.currentTarget.style.borderColor=mc.accent}
-          onMouseLeave={e => e.currentTarget.style.borderColor=DS.border}>
-          <div style={{display:"flex",alignItems:"flex-start",gap:12}}>
-            <div style={{width:44,height:44,borderRadius:12,background:mc.soft,border:`1px solid ${mc.border}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>{ej.icono}</div>
-            <div style={{flex:1}}>
-              <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
-                <div style={{fontSize:14,fontWeight:700,color:DS.ink,fontFamily:"'DM Sans', sans-serif"}}>{ej.titulo}</div>
-                <div style={{fontSize:9,color:mc.accent,background:mc.soft,padding:"3px 7px",borderRadius:5,fontFamily:"'DM Mono', monospace",letterSpacing:1,flexShrink:0,marginLeft:8}}>{ej.dur}</div>
+      {ejercicios.map(ej => {
+        const ejTieneAudio = !!(AUDIO[ej.id]);
+        return (
+          <div key={ej.id} onClick={() => setSeleccionado(ej)}
+            style={{background:DS.card,border:`1px solid ${DS.border}`,borderRadius:14,padding:18,marginBottom:10,cursor:"pointer",transition:"border-color 0.2s"}}
+            onMouseEnter={e => e.currentTarget.style.borderColor=mc.accent}
+            onMouseLeave={e => e.currentTarget.style.borderColor=DS.border}>
+            <div style={{display:"flex",alignItems:"flex-start",gap:12}}>
+              <div style={{width:44,height:44,borderRadius:12,background:mc.soft,border:`1px solid ${mc.border}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>{ej.icono}</div>
+              <div style={{flex:1}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
+                  <div style={{fontSize:14,fontWeight:700,color:DS.ink,fontFamily:"'DM Sans', sans-serif"}}>{ej.titulo}</div>
+                  <div style={{fontSize:9,color:mc.accent,background:mc.soft,padding:"3px 7px",borderRadius:5,fontFamily:"'DM Mono', monospace",letterSpacing:1,flexShrink:0,marginLeft:8}}>{ej.dur}</div>
+                </div>
+                <p style={{fontSize:12,color:DS.inkMuted,lineHeight:1.5,margin:"4px 0 0",fontFamily:"'DM Sans', sans-serif"}}>{ej.desc}</p>
               </div>
-              <p style={{fontSize:12,color:DS.inkMuted,lineHeight:1.5,margin:"4px 0 0",fontFamily:"'DM Sans', sans-serif"}}>{ej.desc}</p>
+            </div>
+            <div style={{marginTop:12,paddingTop:12,borderTop:`1px solid ${DS.border}`,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+              <div style={{fontSize:11,color:ejTieneAudio?DS.gold:DS.inkMuted,fontFamily:"'DM Sans', sans-serif"}}>
+                {ejTieneAudio?"🎙️ Audio del autor":"♿ CC disponible"}
+              </div>
+              <div style={{fontSize:12,color:mc.accent,fontWeight:600,fontFamily:"'DM Sans', sans-serif"}}>Comenzar →</div>
             </div>
           </div>
-          <div style={{marginTop:12,paddingTop:12,borderTop:`1px solid ${DS.border}`,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-            <div style={{fontSize:11,color:DS.inkMuted,fontFamily:"'DM Sans', sans-serif"}}>🎙️ Audio incluido</div>
-            <div style={{fontSize:12,color:mc.accent,fontWeight:600,fontFamily:"'DM Sans', sans-serif"}}>Comenzar →</div>
-          </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
@@ -687,22 +789,37 @@ export default function App() {
     setTimeout(() => { setPantalla(destino); setAnim(true); }, 150);
   };
 
-  const handleCheck = p => { setPerfil(p); ir("plan"); };
-  const handleModulo = id => { setModuloActivo(id); ir("modulo"); };
-
   return (
-    <div style={{minHeight:"100vh",background:DS.bg,fontFamily:"'DM Sans', sans-serif",display:"flex",flexDirection:"column",alignItems:"center",padding:"24px 16px 40px"}}>
+    <div style={{
+      minHeight:"100vh",
+      background:DS.bg,
+      colorScheme:"dark", // ← fuerza modo oscuro en todos los dispositivos
+      fontFamily:"'DM Sans', sans-serif",
+      display:"flex",flexDirection:"column",alignItems:"center",
+      padding:"24px 16px 40px",
+    }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; color-scheme: dark; }
+        html, body { background: #0a0f1e !important; color-scheme: dark; }
         button { font-family: 'DM Sans', sans-serif; }
+        input, textarea, select { color-scheme: dark; }
       `}</style>
+
       <div style={{width:"100%",maxWidth:420,opacity:anim?1:0,transform:anim?"translateY(0)":"translateY(12px)",transition:"all 0.25s ease"}}>
         <Header pantalla={pantalla} onHome={() => ir("inicio")}/>
-        {pantalla==="inicio" && <PantallaInicio onIniciar={() => ir("check")} onModulo={handleModulo}/>}
-        {pantalla==="check" && <PantallaCheck onCompletado={handleCheck}/>}
-        {pantalla==="plan" && perfil && <PantallaPerfilPlan perfil={perfil} onModulo={handleModulo}/>}
-        {pantalla==="modulo" && moduloActivo && <PantallaModulo moduloId={moduloActivo} onVolver={() => ir(perfil?"plan":"inicio")}/>}
+        {pantalla==="inicio" && (
+          <PantallaInicio onIniciar={() => ir("check")}/>
+        )}
+        {pantalla==="check" && (
+          <PantallaCheck onCompletado={p => { setPerfil(p); ir("plan"); }}/>
+        )}
+        {pantalla==="plan" && perfil && (
+          <PantallaPerfilPlan perfil={perfil} onModulo={id => { setModuloActivo(id); ir("modulo"); }}/>
+        )}
+        {pantalla==="modulo" && moduloActivo && (
+          <PantallaModulo moduloId={moduloActivo} onVolver={() => ir(perfil?"plan":"inicio")}/>
+        )}
       </div>
     </div>
   );
