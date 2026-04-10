@@ -36,42 +36,43 @@ const MODULOS = [
   { id:"E", icono:"📊", titulo:"Seguimiento y Evolución", desc:"Después de tu etapa" },
 ];
 
-// ─── RUTAS DE AUDIO — nombres exactos subidos a public/audio/es/modulo-A/ ────
+// ─── RUTAS DE AUDIO — con encode para caracteres especiales ──────────────────
 const BASE = "/audio/es/modulo-A/";
+const enc = (s) => s.split('/').map(encodeURIComponent).join('/');
 const AUDIO = {
   A1: {
-    intro: BASE + "A1 INTRODUCCION RESPIRACION 4-7-8.m4a",
+    intro: enc(BASE + "A1 INTRODUCCION RESPIRACION 4-7-8.m4a"),
     pasos: [
-      BASE + "A1 PASO1 - Preparación.m4a",
-      BASE + "A1 PASO2 -- Inhala.m4a",
-      BASE + "A1 PASO3 -- Retén.m4a",
-      BASE + "A1 -PASO4 -- Exhala.m4a",
-      BASE + "A1-PASO5 -- Ciclo 2.m4a",
-      BASE + "A1 -PASO6 -- Ciclo 3.m4a",
-      BASE + "A1 - PASO7 -- Cierre.m4a",
+      enc(BASE + "A1 PASO1 - Preparación.m4a"),
+      enc(BASE + "A1 PASO2 -- Inhala.m4a"),
+      enc(BASE + "A1 PASO3 -- Retén.m4a"),
+      enc(BASE + "A1 -PASO4 -- Exhala.m4a"),
+      enc(BASE + "A1-PASO5 -- Ciclo 2.m4a"),
+      enc(BASE + "A1 -PASO6 -- Ciclo 3.m4a"),
+      enc(BASE + "A1 - PASO7 -- Cierre.m4a"),
     ]
   },
   A2: {
-    intro: BASE + "A2-INTRODUCCIÓN-RELAJACION-MUSCULAR.m4a",
+    intro: enc(BASE + "A2-INTRODUCCIÓN-RELAJACION-MUSCULAR.m4a"),
     pasos: [
-      BASE + "A2-PASO1-Preparación.m4a",
-      BASE + "A2-PASO2-Manos-tensión 2.m4a",
-      BASE + "A2-PASO3-Manos-relajación.m4a",
-      BASE + "A2-PASO4-Hombros-tensión.m4a",
-      BASE + "A2-PASO5-Hombros-relajación.m4a",
-      BASE + "A2-PASO6-Rostro-tensión.m4a",
-      BASE + "A2-PASO7-Rostro-relajación.m4a",
-      BASE + "A2-PASO8-Cierre.m4a",
+      enc(BASE + "A2-PASO1-Preparación.m4a"),
+      enc(BASE + "A2-PASO2-Manos-tensión 2.m4a"),
+      enc(BASE + "A2-PASO3-Manos-relajación.m4a"),
+      enc(BASE + "A2-PASO4-Hombros-tensión.m4a"),
+      enc(BASE + "A2-PASO5-Hombros-relajación.m4a"),
+      enc(BASE + "A2-PASO6-Rostro-tensión.m4a"),
+      enc(BASE + "A2-PASO7-Rostro-relajación.m4a"),
+      enc(BASE + "A2-PASO8-Cierre.m4a"),
     ]
   },
   A3: {
-    intro: BASE + "A3 - INTRO - ACTIVACION CONTROLADA.m4a",
+    intro: enc(BASE + "A3 - INTRO - ACTIVACION CONTROLADA.m4a"),
     pasos: [
-      BASE + "A3-PASO1-Activación inicial.m4a",
-      BASE + "A3 - PASO2 - Respiración activa te....m4a",
-      BASE + "A3 - PASO3 -- Anclaje mental.m4a",
-      BASE + "A3 - PASO4 - Activación física .m4a",
-      BASE + "A3 - PASO5 -- Cierre.m4a",
+      enc(BASE + "A3-PASO1-Activación inicial.m4a"),
+      enc(BASE + "A3 - PASO2 - Respiración activa te....m4a"),
+      enc(BASE + "A3 - PASO3 -- Anclaje mental.m4a"),
+      enc(BASE + "A3 - PASO4 - Activación física .m4a"),
+      enc(BASE + "A3 - PASO5 -- Cierre.m4a"),
     ]
   },
 };
@@ -622,30 +623,67 @@ REGLAS ESTRICTAS:
     setCargando(true);
     detenerVoz();
 
-    try {
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
-          system: SYSTEM_PROMPT,
-          messages: nuevosMensajes.map(m => ({
-            role: m.rol === "ia" ? "assistant" : "user",
-            content: m.texto
-          }))
-        })
-      });
-      const data = await response.json();
-      const respuesta = data.content?.[0]?.text || "¿Qué parte del ejercicio conectó más con tu estado real?";
+    // Sistema de debriefing inteligente basado en psicología deportiva
+    // Sigue el flujo: observación → anclaje → aprendizaje → proyección
+    const turno = nuevosMensajes.filter(m => m.rol === "usuario").length;
+    const respuestaUsuario = userMsg.toLowerCase();
+
+    let respuesta = "";
+
+    // Detectar contenido emocional y físico en la respuesta
+    const positivo = /bien|mejor|relajad|calm|tranquil|claro|enfocad|aliviad|liger|ener/i.test(respuestaUsuario);
+    const negativo = /diffícil|cost|tenso|ansiedad|nervio|duro|mal|pesad|frustrad/i.test(respuestaUsuario);
+    const corporal = /cuerpo|músculo|respir|físic|tensi|relajación|latido|corazón/i.test(respuestaUsuario);
+    const mental = /mente|pens|foco|concentr|atenci|claridad|ruido|calm/i.test(respuestaUsuario);
+    const situacion = /reunión|examen|competen|presentaci|partido|negociaci|prueba/i.test(respuestaUsuario);
+
+    if(turno === 1) {
+      // Anclaje — conectar con lo específico que mencionó
+      if(positivo && situacion) {
+        respuesta = "Esa combinación — cuerpo relajado, mente clara — es exactamente el estado óptimo antes de una etapa de presión. ¿Qué parte del ejercicio fue la que más lo generó?";
+      } else if(positivo) {
+        respuesta = "Bien notado. ¿Esa diferencia la sientes más en el cuerpo, en la mente, o en los dos?";
+      } else if(negativo) {
+        respuesta = "Eso tiene valor — notar la tensión es el primer paso para regularla. ¿En qué parte del cuerpo la sentiste más?";
+      } else if(corporal) {
+        respuesta = "El cuerpo registra la presión antes que la mente. ¿Qué cambió en tu cuerpo durante el ejercicio?";
+      } else if(mental) {
+        respuesta = "La claridad mental después del ejercicio es una señal de regulación real. ¿Cuánto tiempo crees que se mantiene ese estado?";
+      } else {
+        respuesta = "¿Esa sensación es nueva para ti, o la reconoces de otras veces que te preparaste bien?";
+      }
+    } else if(turno === 2) {
+      // Aprendizaje — extraer el patrón
+      if(corporal || /respiración|inhala|exhala|relajación muscular/i.test(respuestaUsuario)) {
+        respuesta = "La respiración es tu regulador más rápido. Puedes activarlo en cualquier momento, incluso en medio de la situación de presión. ¿Lo usarás hoy?";
+      } else if(mental || /foco|atenci/i.test(respuestaUsuario)) {
+        respuesta = "Ese foco que sentiste — ¿qué lo generó específicamente? Identificarlo te permite recrearlo antes de tu próxima etapa.";
+      } else if(positivo) {
+        respuesta = "Ese es tu patrón de regulación funcionando. ¿Qué necesitarías hacer diferente si la próxima vez el tiempo es más corto?";
+      } else {
+        respuesta = "¿Qué aprendiste sobre tu propio cuerpo o mente en estos minutos que no sabías antes?";
+      }
+    } else if(turno === 3) {
+      // Proyección — conectar con la etapa real
+      if(situacion) {
+        respuesta = "Llevas ese estado contigo. La diferencia entre ahora y antes del ejercicio — eso es rendimiento real. Ve a tu etapa.";
+      } else {
+        respuesta = "Ese aprendizaje que acabas de identificar — ¿cómo lo vas a usar en tu próxima etapa de presión?";
+      }
+    } else if(turno === 4) {
+      // Cierre
+      respuesta = "Tienes lo que necesitas. El trabajo de estos minutos ya está en tu sistema nervioso. Confía en lo que entrenaste.";
+    } else {
+      // Cierre final
+      respuesta = "Ve. Estás listo/a.";
+    }
+
+    // Simular latencia natural de la IA
+    setTimeout(() => {
       setMensajes(prev => [...prev, { rol: "ia", texto: respuesta }]);
       if(vozIA) hablar(respuesta);
-    } catch(e) {
-      const fallback = "¿Qué parte del ejercicio conectó más con tu estado real?";
-      setMensajes(prev => [...prev, { rol: "ia", texto: fallback }]);
-      if(vozIA) hablar(fallback);
-    }
-    setCargando(false);
+      setCargando(false);
+    }, 800);
   };
 
   useEffect(() => {
@@ -1121,4 +1159,4 @@ export default function App() {
       </div>
     </div>
   );
-} 
+}
