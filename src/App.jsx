@@ -534,16 +534,49 @@ function PantallaPerfilPlan({ perfil, onModulo }) {
   );
 }
 
-// ─── PANTALLA COMPLETADO + CONVERSACIÓN IA ───────────────────────────────────
+// ─── PANTALLA COMPLETADO + CONVERSACIÓN IA DE ALTO RENDIMIENTO ───────────────
 function PantallaCompletado({ ejercicio, moduloId, mc, onReiniciar, onVolver }) {
-  const [fase, setFase] = useState("completado"); // completado | chat
+  const [fase, setFase] = useState("completado");
   const [mensajes, setMensajes] = useState([]);
   const [input, setInput] = useState("");
   const [cargando, setCargando] = useState(false);
   const [vozIA, setVozIA] = useState(true);
+  const [escuchando, setEscuchando] = useState(false);
   const chatRef = useRef(null);
+  const reconRef = useRef(null);
 
-  const mensajeInicial = `¡Bien hecho! Acabas de completar "${ejercicio.titulo}". ¿Cómo te sientes ahora? ¿Notaste alguna diferencia en tu cuerpo o mente?`;
+  // Sistema de debriefing basado en psicología deportiva y neurociencia
+  const SYSTEM_PROMPT = `Eres el acompañante de rendimiento de SCIAT Peak State.
+El usuario acaba de completar "${ejercicio.titulo}" del Módulo ${moduloId}.
+
+Tu metodología es la del debriefing post-rendimiento de psicología deportiva de alto rendimiento, combinada con principios de neurociencia aplicada.
+
+Sigue este flujo conversacional de forma NATURAL — nunca mecánica:
+1. OBSERVACIÓN: Ayuda al usuario a observar su estado físico y mental real ahora mismo.
+2. ANCLAJE: Conecta la experiencia con lo que sintió durante el ejercicio.
+3. APRENDIZAJE: Extrae el patrón que puede usar en su próxima etapa de presión real.
+4. PROYECCIÓN: Conecta el aprendizaje con su situación de presión específica.
+
+REGLAS ESTRICTAS:
+- Máximo 2 frases por respuesta. Nunca más.
+- Nunca repitas la misma pregunta ni una similar.
+- Cada respuesta debe avanzar el proceso — nunca volver atrás.
+- Hablas de tú. Eres cálido, preciso, directo.
+- No uses frases genéricas como "gracias por compartir" o "qué bueno".
+- Cuando el usuario comparte algo concreto, refleja ESO específico, no algo genérico.
+- Después de 4-5 intercambios, ofrece un cierre con el aprendizaje clave.
+- Tu voz suena como la de un entrenador de alto rendimiento que conoce a esta persona.`;
+
+  const mensajeInicial = (() => {
+    const aperturas = {
+      A: "Respira. ¿Notas alguna diferencia en tu cuerpo respecto a hace unos minutos?",
+      B: "Observa tu mente ahora mismo. ¿Está más quieta o sigue activa?",
+      C: "¿Qué logro de los que recordaste te generó más energía?",
+      D: "¿Lograste anclar el foco en algún momento del ejercicio?",
+      E: "¿Qué te sorprendió de lo que acabas de analizar?",
+    };
+    return aperturas[moduloId] || "¿Qué cambió en ti durante estos minutos?";
+  })();
 
   const iniciarChat = () => {
     setFase("chat");
@@ -552,12 +585,42 @@ function PantallaCompletado({ ejercicio, moduloId, mc, onReiniciar, onVolver }) 
     if(vozIA) hablar(mensajeInicial);
   };
 
+  // Reconocimiento de voz para personas ciegas
+  const iniciarEscucha = () => {
+    if(!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      alert("Tu navegador no soporta reconocimiento de voz. Usa Chrome.");
+      return;
+    }
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const rec = new SR();
+    rec.lang = "es-ES";
+    rec.continuous = false;
+    rec.interimResults = false;
+    rec.onstart = () => setEscuchando(true);
+    rec.onresult = (e) => {
+      const texto = e.results[0][0].transcript;
+      setInput(texto);
+      setEscuchando(false);
+    };
+    rec.onerror = () => setEscuchando(false);
+    rec.onend = () => setEscuchando(false);
+    reconRef.current = rec;
+    rec.start();
+  };
+
+  const detenerEscucha = () => {
+    if(reconRef.current) reconRef.current.stop();
+    setEscuchando(false);
+  };
+
   const enviar = async () => {
     if(!input.trim() || cargando) return;
     const userMsg = input.trim();
     setInput("");
-    setMensajes(prev => [...prev, { rol: "usuario", texto: userMsg }]);
+    const nuevosMensajes = [...mensajes, { rol: "usuario", texto: userMsg }];
+    setMensajes(nuevosMensajes);
     setCargando(true);
+    detenerVoz();
 
     try {
       const response = await fetch("https://api.anthropic.com/v1/messages", {
@@ -566,19 +629,19 @@ function PantallaCompletado({ ejercicio, moduloId, mc, onReiniciar, onVolver }) 
         body: JSON.stringify({
           model: "claude-sonnet-4-20250514",
           max_tokens: 1000,
-          system: `Eres el asistente de SCIAT Peak State, una app de rendimiento humano bajo presión basada en metodología de alto rendimiento deportivo. El usuario acaba de completar el ejercicio "${ejercicio.titulo}" del Módulo ${moduloId}. Tu rol es acompañar el proceso post-ejercicio con empatía, precisión y brevedad. Hablas de tú al usuario. Eres cálido pero directo. Tus respuestas son cortas — máximo 3 frases. No das discursos. Haces preguntas abiertas para profundizar el aprendizaje. Cuando sea relevante, conecta la experiencia del usuario con su próxima etapa de presión.`,
-          messages: [
-            ...mensajes.map(m => ({ role: m.rol === "ia" ? "assistant" : "user", content: m.texto })),
-            { role: "user", content: userMsg }
-          ]
+          system: SYSTEM_PROMPT,
+          messages: nuevosMensajes.map(m => ({
+            role: m.rol === "ia" ? "assistant" : "user",
+            content: m.texto
+          }))
         })
       });
       const data = await response.json();
-      const respuesta = data.content?.[0]?.text || "Cuéntame más sobre lo que sentiste.";
+      const respuesta = data.content?.[0]?.text || "¿Qué parte del ejercicio conectó más con tu estado real?";
       setMensajes(prev => [...prev, { rol: "ia", texto: respuesta }]);
       if(vozIA) hablar(respuesta);
     } catch(e) {
-      const fallback = "Gracias por compartir. ¿Qué fue lo más difícil del ejercicio?";
+      const fallback = "¿Qué parte del ejercicio conectó más con tu estado real?";
       setMensajes(prev => [...prev, { rol: "ia", texto: fallback }]);
       if(vozIA) hablar(fallback);
     }
@@ -590,57 +653,80 @@ function PantallaCompletado({ ejercicio, moduloId, mc, onReiniciar, onVolver }) 
   }, [mensajes]);
 
   if(fase === "chat") return (
-    <div style={{display:"flex",flexDirection:"column",height:"100%"}}>
-      {/* Header chat */}
+    <div style={{display:"flex",flexDirection:"column"}}>
+      {/* Header */}
       <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16}}>
-        <button onClick={() => { detenerVoz(); setFase("completado"); }}
+        <button onClick={() => { detenerVoz(); detenerEscucha(); setFase("completado"); }}
+          aria-label="Volver"
           style={{background:"transparent",border:`1px solid ${DS.border}`,borderRadius:8,padding:"6px 12px",color:DS.inkMuted,fontSize:13,cursor:"pointer"}}>←</button>
         <div style={{flex:1}}>
-          <div style={{fontSize:13,fontWeight:700,color:DS.ink,fontFamily:"'DM Sans', sans-serif"}}>Reflexión post-ejercicio</div>
-          <div style={{fontSize:10,color:mc.accent,fontFamily:"'DM Mono', monospace"}}>SCIAT IA · {ejercicio.titulo}</div>
+          <div style={{fontSize:13,fontWeight:700,color:DS.ink,fontFamily:"'DM Sans', sans-serif"}}>
+            Reflexión post-actividad
+          </div>
+          <div style={{fontSize:10,color:mc.accent,fontFamily:"'DM Mono', monospace",letterSpacing:1}}>
+            SCIAT IA · {ejercicio.titulo}
+          </div>
         </div>
         <button onClick={() => { setVozIA(!vozIA); if(vozIA) detenerVoz(); }}
+          aria-label={vozIA ? "Desactivar voz IA" : "Activar voz IA"}
+          aria-pressed={vozIA}
           style={{background:vozIA?mc.soft:"transparent",border:`1px solid ${vozIA?mc.accent:DS.border}`,borderRadius:8,padding:"6px 10px",color:vozIA?mc.accent:DS.inkMuted,fontSize:14,cursor:"pointer"}}>
           {vozIA?"🔊":"🔇"}
         </button>
       </div>
 
       {/* Mensajes */}
-      <div ref={chatRef} style={{flex:1,overflowY:"auto",marginBottom:12,maxHeight:380}}>
+      <div ref={chatRef} role="log" aria-live="polite" aria-label="Conversación con SCIAT IA"
+        style={{overflowY:"auto",marginBottom:12,maxHeight:360}}>
         {mensajes.map((m, i) => (
-          <div key={i} style={{
-            display:"flex",justifyContent:m.rol==="usuario"?"flex-end":"flex-start",
-            marginBottom:12,
-          }}>
+          <div key={i} style={{display:"flex",justifyContent:m.rol==="usuario"?"flex-end":"flex-start",marginBottom:12}}>
             {m.rol==="ia" && (
-              <div style={{width:28,height:28,borderRadius:"50%",background:mc.soft,border:`1px solid ${mc.border}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,flexShrink:0,marginRight:8,marginTop:2}}>⬡</div>
+              <div aria-hidden="true" style={{width:28,height:28,borderRadius:"50%",background:mc.soft,border:`1px solid ${mc.border}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,flexShrink:0,marginRight:8,marginTop:2}}>⬡</div>
             )}
             <div style={{
-              maxWidth:"78%",padding:"10px 14px",borderRadius:m.rol==="usuario"?"14px 14px 4px 14px":"14px 14px 14px 4px",
+              maxWidth:"78%",padding:"10px 14px",
+              borderRadius:m.rol==="usuario"?"14px 14px 4px 14px":"14px 14px 14px 4px",
               background:m.rol==="usuario"?mc.soft:DS.card,
               border:`1px solid ${m.rol==="usuario"?mc.border:DS.border}`,
             }}>
-              <p style={{fontSize:13,color:DS.ink,lineHeight:1.6,margin:0,fontFamily:"'DM Sans', sans-serif"}}>{m.texto}</p>
+              <p style={{fontSize:13,color:DS.ink,lineHeight:1.6,margin:0,fontFamily:"'DM Sans', sans-serif"}}>
+                {m.texto}
+              </p>
             </div>
           </div>
         ))}
         {cargando && (
-          <div style={{display:"flex",gap:6,padding:"10px 14px"}}>
+          <div style={{display:"flex",gap:5,padding:"8px 14px"}} aria-label="SCIAT IA está escribiendo">
             {[0,1,2].map(i => (
-              <div key={i} style={{width:6,height:6,borderRadius:"50%",background:mc.accent,opacity:0.6,animation:`pulse 1s ease-in-out ${i*0.2}s infinite`}}/>
+              <div key={i} style={{width:7,height:7,borderRadius:"50%",background:mc.accent,opacity:0.7}}/>
             ))}
           </div>
         )}
       </div>
 
-      {/* Input */}
-      <div style={{display:"flex",gap:8}}>
+      {/* Input con voz */}
+      <div style={{display:"flex",gap:8,alignItems:"center"}}>
+        {/* Botón micrófono para personas ciegas */}
+        <button
+          onClick={escuchando ? detenerEscucha : iniciarEscucha}
+          aria-label={escuchando ? "Detener escucha de voz" : "Hablar — activar reconocimiento de voz"}
+          aria-pressed={escuchando}
+          style={{
+            width:44,height:44,borderRadius:10,border:`1px solid ${escuchando?mc.accent:DS.border}`,
+            background:escuchando?mc.soft:"transparent",
+            color:escuchando?mc.accent:DS.inkMuted,
+            fontSize:18,cursor:"pointer",flexShrink:0,
+            animation:escuchando?"pulse 1s infinite":"none",
+          }}>
+          {escuchando?"⏹":"🎤"}
+        </button>
+
         <input
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key==="Enter" && enviar()}
-          placeholder="Escribe tu respuesta..."
-          aria-label="Escribe tu respuesta"
+          placeholder={escuchando ? "Escuchando..." : "Escribe o habla tu respuesta..."}
+          aria-label="Escribe o habla tu respuesta"
           style={{
             flex:1,background:DS.card,border:`1px solid ${DS.border}`,borderRadius:10,
             padding:"10px 14px",color:DS.ink,fontSize:13,outline:"none",
@@ -650,10 +736,25 @@ function PantallaCompletado({ ejercicio, moduloId, mc, onReiniciar, onVolver }) 
           onBlur={e => e.target.style.borderColor=DS.border}
         />
         <button onClick={enviar} disabled={!input.trim()||cargando}
-          style={{padding:"10px 16px",borderRadius:10,border:"none",background:input.trim()&&!cargando?mc.accent:DS.border,color:DS.bg,fontSize:16,cursor:input.trim()&&!cargando?"pointer":"not-allowed",transition:"background 0.2s"}}>
-          →
-        </button>
+          aria-label="Enviar mensaje"
+          style={{
+            width:44,height:44,borderRadius:10,border:"none",flexShrink:0,
+            background:input.trim()&&!cargando?mc.accent:DS.border,
+            color:DS.bg,fontSize:18,
+            cursor:input.trim()&&!cargando?"pointer":"not-allowed",
+            transition:"background 0.2s",
+          }}>→</button>
       </div>
+
+      {/* Indicador de escucha activa */}
+      {escuchando && (
+        <div role="status" aria-live="assertive"
+          style={{marginTop:8,padding:"6px 12px",background:mc.soft,borderRadius:8,border:`1px solid ${mc.border}`,textAlign:"center"}}>
+          <span style={{fontSize:11,color:mc.accent,fontFamily:"'DM Mono', monospace",letterSpacing:1}}>
+            🎤 ESCUCHANDO... toca ⏹ para detener
+          </span>
+        </div>
+      )}
     </div>
   );
 
@@ -662,33 +763,45 @@ function PantallaCompletado({ ejercicio, moduloId, mc, onReiniciar, onVolver }) 
     <div style={{textAlign:"center",padding:"32px 0"}}>
       <div style={{fontSize:56,marginBottom:16}}>✅</div>
       <h2 style={{fontSize:22,fontWeight:700,color:DS.ink,marginBottom:8,fontFamily:"'Cormorant Garamond', serif"}}>
-        Ejercicio completado
+        Actividad completada
       </h2>
       <p style={{fontSize:14,color:DS.inkMuted,lineHeight:1.6,marginBottom:28,fontFamily:"'DM Sans', sans-serif"}}>
-        Has trabajado tu regulación. Llevas eso a tu etapa.
+        Has trabajado tu rendimiento. Llevas eso a tu etapa.
       </p>
 
-      {/* Opción IA */}
+      {/* CTA conversación IA */}
       <div style={{background:DS.emeraldSoft,border:`1px solid ${DS.emeraldBorder}`,borderRadius:14,padding:20,marginBottom:16,textAlign:"left"}}>
-        <div style={{fontSize:10,color:DS.emerald,fontFamily:"'DM Mono', monospace",letterSpacing:1,marginBottom:6}}>SCIAT IA</div>
+        <div style={{fontSize:10,color:DS.emerald,fontFamily:"'DM Mono', monospace",letterSpacing:1,marginBottom:6}}>
+          SCIAT IA · DEBRIEFING POST-ACTIVIDAD
+        </div>
         <div style={{fontSize:14,fontWeight:600,color:DS.ink,fontFamily:"'DM Sans', sans-serif",marginBottom:4}}>
-          ¿Cómo fue la experiencia?
+          Conecta tu experiencia con tu próxima etapa
         </div>
         <p style={{fontSize:12,color:DS.inkMuted,fontFamily:"'DM Sans', sans-serif",lineHeight:1.5,marginBottom:14}}>
-          Reflexiona con la IA sobre lo que sentiste. Este paso convierte la práctica en aprendizaje.
+          Basado en psicología deportiva de alto rendimiento y neurociencia. Texto o voz — accesible para todos.
         </p>
-        <button onClick={iniciarChat} style={{
-          width:"100%",padding:12,borderRadius:10,border:"none",
-          background:`linear-gradient(135deg, ${DS.emerald}, #0099aa)`,
-          color:DS.bg,fontSize:13,fontWeight:700,cursor:"pointer",
-          fontFamily:"'DM Sans', sans-serif",
-        }}>
-          💬 Conversar con la IA →
-        </button>
+        <div style={{display:"flex",gap:8}}>
+          <button onClick={iniciarChat} style={{
+            flex:1,padding:12,borderRadius:10,border:"none",
+            background:`linear-gradient(135deg, ${DS.emerald}, #0099aa)`,
+            color:DS.bg,fontSize:13,fontWeight:700,cursor:"pointer",
+            fontFamily:"'DM Sans', sans-serif",
+          }}>
+            💬 Reflexionar con IA
+          </button>
+          <button onClick={() => { iniciarChat(); setTimeout(iniciarEscucha, 800); }}
+            aria-label="Reflexionar con IA usando voz"
+            style={{
+              padding:"12px 14px",borderRadius:10,border:`1px solid ${DS.emeraldBorder}`,
+              background:DS.emeraldSoft,color:DS.emerald,fontSize:18,cursor:"pointer",
+            }}>
+            🎤
+          </button>
+        </div>
       </div>
 
       <button onClick={onReiniciar} style={{width:"100%",padding:14,borderRadius:12,border:`1px solid ${DS.border}`,background:"transparent",color:DS.inkMuted,fontSize:13,cursor:"pointer",marginBottom:10,fontFamily:"'DM Sans', sans-serif"}}>
-        ↺ Repetir ejercicio
+        ↺ Repetir actividad
       </button>
       <button onClick={onVolver} style={{width:"100%",padding:14,borderRadius:12,border:"none",background:`linear-gradient(135deg, ${mc.accent}, ${mc.accent}cc)`,color:DS.bg,fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"'DM Sans', sans-serif"}}>
         ← Volver al módulo
@@ -1008,4 +1121,4 @@ export default function App() {
       </div>
     </div>
   );
-} 
+}
