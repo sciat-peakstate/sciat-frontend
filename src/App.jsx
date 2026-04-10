@@ -36,45 +36,61 @@ const MODULOS = [
   { id:"E", icono:"📊", titulo:"Seguimiento y Evolución", desc:"Después de tu etapa" },
 ];
 
-// ─── RUTAS DE AUDIO ───────────────────────────────────────────────────────────
-// Los archivos están en: src/assets/audio/es/modulo-A/
+// ─── RUTAS DE AUDIO — nombres exactos subidos a public/audio/es/modulo-A/ ────
+const BASE = "/audio/es/modulo-A/";
 const AUDIO = {
   A1: {
-    intro: "/src/assets/audio/es/modulo-A/modulo-A_ej1_intro.m4a",
+    intro: BASE + "A1 INTRODUCCION RESPIRACION 4-7-8.m4a",
     pasos: [
-      "/src/assets/audio/es/modulo-A/modulo-A_ej1_p1.m4a",
-      "/src/assets/audio/es/modulo-A/modulo-A_ej1_p2.m4a",
-      "/src/assets/audio/es/modulo-A/modulo-A_ej1_p3.m4a",
-      "/src/assets/audio/es/modulo-A/modulo-A_ej1_p4.m4a",
-      "/src/assets/audio/es/modulo-A/modulo-A_ej1_p5.m4a",
-      "/src/assets/audio/es/modulo-A/modulo-A_ej1_p6.m4a",
-      "/src/assets/audio/es/modulo-A/modulo-A_ej1_p7.m4a",
+      BASE + "A1 PASO1 - Preparación.m4a",
+      BASE + "A1 PASO2 -- Inhala.m4a",
+      BASE + "A1 PASO3 -- Retén.m4a",
+      BASE + "A1 -PASO4 -- Exhala.m4a",
+      BASE + "A1-PASO5 -- Ciclo 2.m4a",
+      BASE + "A1 -PASO6 -- Ciclo 3.m4a",
+      BASE + "A1 - PASO7 -- Cierre.m4a",
     ]
   },
   A2: {
-    intro: "/src/assets/audio/es/modulo-A/modulo-A_ej2_intro.m4a",
+    intro: BASE + "A2-INTRODUCCIÓN-RELAJACION-MUSCULAR.m4a",
     pasos: [
-      "/src/assets/audio/es/modulo-A/modulo-A_ej2_p1.m4a",
-      "/src/assets/audio/es/modulo-A/modulo-A_ej2_p2.m4a",
-      "/src/assets/audio/es/modulo-A/modulo-A_ej2_p3.m4a",
-      "/src/assets/audio/es/modulo-A/modulo-A_ej2_p4.m4a",
-      "/src/assets/audio/es/modulo-A/modulo-A_ej2_p5.m4a",
-      "/src/assets/audio/es/modulo-A/modulo-A_ej2_p6.m4a",
-      "/src/assets/audio/es/modulo-A/modulo-A_ej2_p7.m4a",
-      "/src/assets/audio/es/modulo-A/modulo-A_ej2_p8.m4a",
+      BASE + "A2-PASO1-Preparación.m4a",
+      BASE + "A2-PASO2-Manos-tensión 2.m4a",
+      BASE + "A2-PASO3-Manos-relajación.m4a",
+      BASE + "A2-PASO4-Hombros-tensión.m4a",
+      BASE + "A2-PASO5-Hombros-relajación.m4a",
+      BASE + "A2-PASO6-Rostro-tensión.m4a",
+      BASE + "A2-PASO7-Rostro-relajación.m4a",
+      BASE + "A2-PASO8-Cierre.m4a",
     ]
   },
   A3: {
-    intro: "/src/assets/audio/es/modulo-A/modulo-A_ej3_intro.m4a",
+    intro: BASE + "A3 - INTRO - ACTIVACION CONTROLADA.m4a",
     pasos: [
-      "/src/assets/audio/es/modulo-A/modulo-A_ej3_p1.m4a",
-      "/src/assets/audio/es/modulo-A/modulo-A_ej3_p2.m4a",
-      "/src/assets/audio/es/modulo-A/modulo-A_ej3_p3.m4a",
-      "/src/assets/audio/es/modulo-A/modulo-A_ej3_p4.m4a",
-      "/src/assets/audio/es/modulo-A/modulo-A_ej3_p5.m4a",
+      BASE + "A3-PASO1-Activación inicial.m4a",
+      BASE + "A3 - PASO2 - Respiración activa te....m4a",
+      BASE + "A3 - PASO3 -- Anclaje mental.m4a",
+      BASE + "A3 - PASO4 - Activación física .m4a",
+      BASE + "A3 - PASO5 -- Cierre.m4a",
     ]
   },
 };
+
+// ─── WEB SPEECH — VOZ PARA ANÁLISIS IA ───────────────────────────────────────
+const hablar = (texto) => {
+  if(!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(texto);
+  u.lang = "es-ES";
+  u.rate = 0.9;
+  u.pitch = 1;
+  // Buscar voz en español
+  const voces = window.speechSynthesis.getVoices();
+  const vozEs = voces.find(v => v.lang.startsWith("es")) || voces[0];
+  if(vozEs) u.voice = vozEs;
+  window.speechSynthesis.speak(u);
+};
+const detenerVoz = () => { if(window.speechSynthesis) window.speechSynthesis.cancel(); };
 
 const EJERCICIOS = {
   A: [
@@ -470,7 +486,13 @@ function PantallaPerfilPlan({ perfil, onModulo }) {
       </div>
 
       <div style={{background:DS.emeraldSoft,border:`1px solid ${DS.emeraldBorder}`,borderRadius:12,padding:16,marginBottom:20}}>
-        <div style={{fontSize:11,color:DS.emerald,fontFamily:"'DM Mono', monospace",letterSpacing:1,marginBottom:6}}>ANÁLISIS IA</div>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
+          <div style={{fontSize:11,color:DS.emerald,fontFamily:"'DM Mono', monospace",letterSpacing:1}}>ANÁLISIS IA</div>
+          <button onClick={() => hablar(recomendados.length>=3?"Detecto activación elevada con confianza en desarrollo. Regula primero el cuerpo, luego el pensamiento.":recomendados.length===2?"Tu estado muestra áreas específicas de mejora. El plan está personalizado para ti.":"Tu estado es sólido. El foco ahora es mantener y afinar tu concentración.")}
+            style={{background:DS.emeraldSoft,border:`1px solid ${DS.emeraldBorder}`,borderRadius:6,padding:"3px 8px",color:DS.emerald,fontSize:12,cursor:"pointer"}}>
+            🔊
+          </button>
+        </div>
         <p style={{fontSize:13,color:DS.inkMid,lineHeight:1.7,fontFamily:"'DM Sans', sans-serif",margin:0}}>
           {recomendados.length>=3?"Detecto activación elevada con confianza en desarrollo. Regula primero el cuerpo, luego el pensamiento.":recomendados.length===2?"Tu estado muestra áreas específicas de mejora. El plan está personalizado para ti.":"Tu estado es sólido. El foco ahora es mantener y afinar tu concentración."}
         </p>
@@ -508,6 +530,169 @@ function PantallaPerfilPlan({ perfil, onModulo }) {
           <div style={{fontSize:11,color:DS.inkMuted,fontFamily:"'DM Sans', sans-serif"}}>Disponible después de tu etapa de presión</div>
         </div>
       </div>
+    </div>
+  );
+}
+
+// ─── PANTALLA COMPLETADO + CONVERSACIÓN IA ───────────────────────────────────
+function PantallaCompletado({ ejercicio, moduloId, mc, onReiniciar, onVolver }) {
+  const [fase, setFase] = useState("completado"); // completado | chat
+  const [mensajes, setMensajes] = useState([]);
+  const [input, setInput] = useState("");
+  const [cargando, setCargando] = useState(false);
+  const [vozIA, setVozIA] = useState(true);
+  const chatRef = useRef(null);
+
+  const mensajeInicial = `¡Bien hecho! Acabas de completar "${ejercicio.titulo}". ¿Cómo te sientes ahora? ¿Notaste alguna diferencia en tu cuerpo o mente?`;
+
+  const iniciarChat = () => {
+    setFase("chat");
+    const msg = { rol: "ia", texto: mensajeInicial };
+    setMensajes([msg]);
+    if(vozIA) hablar(mensajeInicial);
+  };
+
+  const enviar = async () => {
+    if(!input.trim() || cargando) return;
+    const userMsg = input.trim();
+    setInput("");
+    setMensajes(prev => [...prev, { rol: "usuario", texto: userMsg }]);
+    setCargando(true);
+
+    try {
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1000,
+          system: `Eres el asistente de SCIAT Peak State, una app de rendimiento humano bajo presión basada en metodología de alto rendimiento deportivo. El usuario acaba de completar el ejercicio "${ejercicio.titulo}" del Módulo ${moduloId}. Tu rol es acompañar el proceso post-ejercicio con empatía, precisión y brevedad. Hablas de tú al usuario. Eres cálido pero directo. Tus respuestas son cortas — máximo 3 frases. No das discursos. Haces preguntas abiertas para profundizar el aprendizaje. Cuando sea relevante, conecta la experiencia del usuario con su próxima etapa de presión.`,
+          messages: [
+            ...mensajes.map(m => ({ role: m.rol === "ia" ? "assistant" : "user", content: m.texto })),
+            { role: "user", content: userMsg }
+          ]
+        })
+      });
+      const data = await response.json();
+      const respuesta = data.content?.[0]?.text || "Cuéntame más sobre lo que sentiste.";
+      setMensajes(prev => [...prev, { rol: "ia", texto: respuesta }]);
+      if(vozIA) hablar(respuesta);
+    } catch(e) {
+      const fallback = "Gracias por compartir. ¿Qué fue lo más difícil del ejercicio?";
+      setMensajes(prev => [...prev, { rol: "ia", texto: fallback }]);
+      if(vozIA) hablar(fallback);
+    }
+    setCargando(false);
+  };
+
+  useEffect(() => {
+    if(chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight;
+  }, [mensajes]);
+
+  if(fase === "chat") return (
+    <div style={{display:"flex",flexDirection:"column",height:"100%"}}>
+      {/* Header chat */}
+      <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16}}>
+        <button onClick={() => { detenerVoz(); setFase("completado"); }}
+          style={{background:"transparent",border:`1px solid ${DS.border}`,borderRadius:8,padding:"6px 12px",color:DS.inkMuted,fontSize:13,cursor:"pointer"}}>←</button>
+        <div style={{flex:1}}>
+          <div style={{fontSize:13,fontWeight:700,color:DS.ink,fontFamily:"'DM Sans', sans-serif"}}>Reflexión post-ejercicio</div>
+          <div style={{fontSize:10,color:mc.accent,fontFamily:"'DM Mono', monospace"}}>SCIAT IA · {ejercicio.titulo}</div>
+        </div>
+        <button onClick={() => { setVozIA(!vozIA); if(vozIA) detenerVoz(); }}
+          style={{background:vozIA?mc.soft:"transparent",border:`1px solid ${vozIA?mc.accent:DS.border}`,borderRadius:8,padding:"6px 10px",color:vozIA?mc.accent:DS.inkMuted,fontSize:14,cursor:"pointer"}}>
+          {vozIA?"🔊":"🔇"}
+        </button>
+      </div>
+
+      {/* Mensajes */}
+      <div ref={chatRef} style={{flex:1,overflowY:"auto",marginBottom:12,maxHeight:380}}>
+        {mensajes.map((m, i) => (
+          <div key={i} style={{
+            display:"flex",justifyContent:m.rol==="usuario"?"flex-end":"flex-start",
+            marginBottom:12,
+          }}>
+            {m.rol==="ia" && (
+              <div style={{width:28,height:28,borderRadius:"50%",background:mc.soft,border:`1px solid ${mc.border}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,flexShrink:0,marginRight:8,marginTop:2}}>⬡</div>
+            )}
+            <div style={{
+              maxWidth:"78%",padding:"10px 14px",borderRadius:m.rol==="usuario"?"14px 14px 4px 14px":"14px 14px 14px 4px",
+              background:m.rol==="usuario"?mc.soft:DS.card,
+              border:`1px solid ${m.rol==="usuario"?mc.border:DS.border}`,
+            }}>
+              <p style={{fontSize:13,color:DS.ink,lineHeight:1.6,margin:0,fontFamily:"'DM Sans', sans-serif"}}>{m.texto}</p>
+            </div>
+          </div>
+        ))}
+        {cargando && (
+          <div style={{display:"flex",gap:6,padding:"10px 14px"}}>
+            {[0,1,2].map(i => (
+              <div key={i} style={{width:6,height:6,borderRadius:"50%",background:mc.accent,opacity:0.6,animation:`pulse 1s ease-in-out ${i*0.2}s infinite`}}/>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Input */}
+      <div style={{display:"flex",gap:8}}>
+        <input
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => e.key==="Enter" && enviar()}
+          placeholder="Escribe tu respuesta..."
+          aria-label="Escribe tu respuesta"
+          style={{
+            flex:1,background:DS.card,border:`1px solid ${DS.border}`,borderRadius:10,
+            padding:"10px 14px",color:DS.ink,fontSize:13,outline:"none",
+            fontFamily:"'DM Sans', sans-serif",
+          }}
+          onFocus={e => e.target.style.borderColor=mc.accent}
+          onBlur={e => e.target.style.borderColor=DS.border}
+        />
+        <button onClick={enviar} disabled={!input.trim()||cargando}
+          style={{padding:"10px 16px",borderRadius:10,border:"none",background:input.trim()&&!cargando?mc.accent:DS.border,color:DS.bg,fontSize:16,cursor:input.trim()&&!cargando?"pointer":"not-allowed",transition:"background 0.2s"}}>
+          →
+        </button>
+      </div>
+    </div>
+  );
+
+  // Pantalla completado inicial
+  return (
+    <div style={{textAlign:"center",padding:"32px 0"}}>
+      <div style={{fontSize:56,marginBottom:16}}>✅</div>
+      <h2 style={{fontSize:22,fontWeight:700,color:DS.ink,marginBottom:8,fontFamily:"'Cormorant Garamond', serif"}}>
+        Ejercicio completado
+      </h2>
+      <p style={{fontSize:14,color:DS.inkMuted,lineHeight:1.6,marginBottom:28,fontFamily:"'DM Sans', sans-serif"}}>
+        Has trabajado tu regulación. Llevas eso a tu etapa.
+      </p>
+
+      {/* Opción IA */}
+      <div style={{background:DS.emeraldSoft,border:`1px solid ${DS.emeraldBorder}`,borderRadius:14,padding:20,marginBottom:16,textAlign:"left"}}>
+        <div style={{fontSize:10,color:DS.emerald,fontFamily:"'DM Mono', monospace",letterSpacing:1,marginBottom:6}}>SCIAT IA</div>
+        <div style={{fontSize:14,fontWeight:600,color:DS.ink,fontFamily:"'DM Sans', sans-serif",marginBottom:4}}>
+          ¿Cómo fue la experiencia?
+        </div>
+        <p style={{fontSize:12,color:DS.inkMuted,fontFamily:"'DM Sans', sans-serif",lineHeight:1.5,marginBottom:14}}>
+          Reflexiona con la IA sobre lo que sentiste. Este paso convierte la práctica en aprendizaje.
+        </p>
+        <button onClick={iniciarChat} style={{
+          width:"100%",padding:12,borderRadius:10,border:"none",
+          background:`linear-gradient(135deg, ${DS.emerald}, #0099aa)`,
+          color:DS.bg,fontSize:13,fontWeight:700,cursor:"pointer",
+          fontFamily:"'DM Sans', sans-serif",
+        }}>
+          💬 Conversar con la IA →
+        </button>
+      </div>
+
+      <button onClick={onReiniciar} style={{width:"100%",padding:14,borderRadius:12,border:`1px solid ${DS.border}`,background:"transparent",color:DS.inkMuted,fontSize:13,cursor:"pointer",marginBottom:10,fontFamily:"'DM Sans', sans-serif"}}>
+        ↺ Repetir ejercicio
+      </button>
+      <button onClick={onVolver} style={{width:"100%",padding:14,borderRadius:12,border:"none",background:`linear-gradient(135deg, ${mc.accent}, ${mc.accent}cc)`,color:DS.bg,fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"'DM Sans', sans-serif"}}>
+        ← Volver al módulo
+      </button>
     </div>
   );
 }
@@ -590,19 +775,19 @@ function EjercicioActivo({ ejercicio, moduloId, onVolver }) {
   };
 
   const reiniciar = () => {
-    clearInterval(timerRef.current); detenerAudio();
+    clearInterval(timerRef.current); detenerAudio(); detenerVoz();
     setPaso(-1); setSegundos(0); setCorriendo(false); setCompletado(false);
     if(tieneAudio && audioOn) reproducirAudio(audioData.intro);
   };
 
   if(completado) return (
-    <div style={{textAlign:"center",padding:"40px 0"}}>
-      <div style={{fontSize:56,marginBottom:16}}>✅</div>
-      <h2 style={{fontSize:22,fontWeight:700,color:DS.ink,marginBottom:8,fontFamily:"'Cormorant Garamond', serif"}}>Ejercicio completado</h2>
-      <p style={{fontSize:14,color:DS.inkMuted,lineHeight:1.6,marginBottom:28,fontFamily:"'DM Sans', sans-serif"}}>Has trabajado tu rendimiento. Llevas eso a tu etapa.</p>
-      <button onClick={reiniciar} style={{width:"100%",padding:14,borderRadius:12,border:`1px solid ${DS.border}`,background:"transparent",color:DS.inkMuted,fontSize:13,cursor:"pointer",marginBottom:12,fontFamily:"'DM Sans', sans-serif"}}>Repetir ejercicio</button>
-      <button onClick={onVolver} style={{width:"100%",padding:14,borderRadius:12,border:"none",background:`linear-gradient(135deg, ${mc.accent}, ${mc.accent}cc)`,color:DS.bg,fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"'DM Sans', sans-serif"}}>← Volver al módulo</button>
-    </div>
+    <PantallaCompletado
+      ejercicio={ejercicio}
+      moduloId={moduloId}
+      mc={mc}
+      onReiniciar={reiniciar}
+      onVolver={onVolver}
+    />
   );
 
   const radio=44, circ=2*Math.PI*radio;
@@ -823,4 +1008,4 @@ export default function App() {
       </div>
     </div>
   );
-} 
+}
