@@ -36,58 +36,58 @@ const MODULOS = [
   { id:"E", icono:"📊", titulo:"Seguimiento y Evolución", desc:"Después de tu etapa" },
 ];
 
-// ─── RUTAS DE AUDIO — con encode para caracteres especiales ──────────────────
+// ─── RUTAS DE AUDIO — nombres limpios en public/audio/es/modulo-A/ ───────────
 const BASE = "/audio/es/modulo-A/";
-const enc = (s) => s.split('/').map(encodeURIComponent).join('/');
 const AUDIO = {
   A1: {
-    intro: enc(BASE + "A1 INTRODUCCION RESPIRACION 4-7-8.m4a"),
+    intro: BASE + "A1-intro-respiracion.m4a",
     pasos: [
-      enc(BASE + "A1 PASO1 - Preparación.m4a"),
-      enc(BASE + "A1 PASO2 -- Inhala.m4a"),
-      enc(BASE + "A1 PASO3 -- Retén.m4a"),
-      enc(BASE + "A1 -PASO4 -- Exhala.m4a"),
-      enc(BASE + "A1-PASO5 -- Ciclo 2.m4a"),
-      enc(BASE + "A1 -PASO6 -- Ciclo 3.m4a"),
-      enc(BASE + "A1 - PASO7 -- Cierre.m4a"),
+      BASE + "A1-p1-preparacion.m4a",
+      BASE + "A1-p2-inhala.m4a",
+      BASE + "A1-p3-reten.m4a",
+      BASE + "A1-p4-exhala.m4a",
+      BASE + "A1-p5-ciclo2.m4a",
+      BASE + "A1-p6-ciclo3.m4a",
+      BASE + "A1-p7-cierre.m4a",
     ]
   },
   A2: {
-    intro: enc(BASE + "A2-INTRODUCCIÓN-RELAJACION-MUSCULAR.m4a"),
+    intro: BASE + "A2-intro-relajacion.m4a",
     pasos: [
-      enc(BASE + "A2-PASO1-Preparación.m4a"),
-      enc(BASE + "A2-PASO2-Manos-tensión 2.m4a"),
-      enc(BASE + "A2-PASO3-Manos-relajación.m4a"),
-      enc(BASE + "A2-PASO4-Hombros-tensión.m4a"),
-      enc(BASE + "A2-PASO5-Hombros-relajación.m4a"),
-      enc(BASE + "A2-PASO6-Rostro-tensión.m4a"),
-      enc(BASE + "A2-PASO7-Rostro-relajación.m4a"),
-      enc(BASE + "A2-PASO8-Cierre.m4a"),
+      BASE + "A2-p1-preparacion.m4a",
+      BASE + "A2-p2-manos-tension.m4a",
+      BASE + "A2-p3-manos-relajacion.m4a",
+      BASE + "A2-p4-hombros-tension.m4a",
+      BASE + "A2-p5-hombros-relajacion.m4a",
+      BASE + "A2-p6-rostro-tension.m4a",
+      BASE + "A2-p7-rostro-relajacion.m4a",
+      BASE + "A2-p8-cierre.m4a",
     ]
   },
   A3: {
-    intro: enc(BASE + "A3 - INTRO - ACTIVACION CONTROLADA.m4a"),
+    intro: BASE + "A3-intro-activacion.m4a",
     pasos: [
-      enc(BASE + "A3-PASO1-Activación inicial.m4a"),
-      enc(BASE + "A3 - PASO2 - Respiración activa te....m4a"),
-      enc(BASE + "A3 - PASO3 -- Anclaje mental.m4a"),
-      enc(BASE + "A3 - PASO4 - Activación física .m4a"),
-      enc(BASE + "A3 - PASO5 -- Cierre.m4a"),
+      BASE + "A3-p1-activacion-inicial.m4a",
+      BASE + "A3-p2-respiracion-activa.m4a",
+      BASE + "A3-p3-anclaje-mental.m4a",
+      BASE + "A3-p4-activacion-fisica.m4a",
+      BASE + "A3-p5-cierre.m4a",
     ]
   },
 };
 
-// ─── WEB SPEECH — VOZ PARA ANÁLISIS IA ───────────────────────────────────────
-const hablar = (texto) => {
+// ─── WEB SPEECH ───────────────────────────────────────────────────────────────
+const hablar = (texto, rate = 0.88) => {
   if(!window.speechSynthesis) return;
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(texto);
   u.lang = "es-ES";
-  u.rate = 0.9;
-  u.pitch = 1;
-  // Buscar voz en español
+  u.rate = rate;
+  u.pitch = 1.05;
   const voces = window.speechSynthesis.getVoices();
-  const vozEs = voces.find(v => v.lang.startsWith("es")) || voces[0];
+  const vozEs = voces.find(v => v.lang.startsWith("es") && v.name.includes("Female"))
+    || voces.find(v => v.lang.startsWith("es"))
+    || voces[0];
   if(vozEs) u.voice = vozEs;
   window.speechSynthesis.speak(u);
 };
@@ -235,7 +235,118 @@ const EJERCICIOS = {
   ],
 };
 
-// ─── LOGO ─────────────────────────────────────────────────────────────────────
+// ─── PANTALLA BIENVENIDA ──────────────────────────────────────────────────────
+function PantallaBienvenida({ onEntrar }) {
+  const [fase, setFase] = useState(0); // 0=animando 1=listo
+  const textoVoz = "Hola. Soy SCIAT Peak State. Te acompaño a optimizar tu potencial bajo presión. Deporte, academia, organización — el método es el mismo. Vamos.";
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setFase(1), 2800);
+    const t2 = setTimeout(() => {
+      hablar(textoVoz, 0.85);
+    }, 600);
+    return () => { clearTimeout(t1); clearTimeout(t2); detenerVoz(); };
+  }, []);
+
+  return (
+    <div style={{
+      minHeight:"100vh", background:DS.bg,
+      display:"flex", flexDirection:"column",
+      alignItems:"center", justifyContent:"center",
+      padding:"40px 24px", textAlign:"center",
+      position:"relative", overflow:"hidden",
+    }}>
+      {/* Fondo decorativo */}
+      <div style={{position:"absolute",top:-80,right:-80,width:300,height:300,borderRadius:"50%",background:`radial-gradient(circle, ${DS.emeraldSoft} 0%, transparent 70%)`}}/>
+      <div style={{position:"absolute",bottom:-60,left:-60,width:240,height:240,borderRadius:"50%",background:`radial-gradient(circle, ${DS.goldSoft} 0%, transparent 70%)`}}/>
+
+      {/* Logo animado */}
+      <div style={{
+        opacity: fase >= 0 ? 1 : 0,
+        transform: fase >= 0 ? "scale(1)" : "scale(0.8)",
+        transition: "all 0.8s ease",
+        marginBottom: 32,
+      }}>
+        <svg width={80} height={80} viewBox="0 0 48 48" fill="none">
+          <path d="M24 3 L42 13.5 L42 34.5 L24 45 L6 34.5 L6 13.5 Z" stroke={DS.emerald} strokeWidth="1.5" fill="none"/>
+          <path d="M24 10 L36 17 L36 31 L24 38 L12 31 L12 17 Z" stroke={DS.gold} strokeWidth="1" fill={DS.goldSoft}/>
+          <circle cx="24" cy="24" r="3" fill={DS.emerald}/>
+          <circle cx="24" cy="13" r="1.5" fill={DS.gold}/>
+          <circle cx="33" cy="18.5" r="1.5" fill={DS.gold}/>
+          <circle cx="33" cy="29.5" r="1.5" fill={DS.gold}/>
+          <circle cx="24" cy="35" r="1.5" fill={DS.gold}/>
+          <circle cx="15" cy="29.5" r="1.5" fill={DS.gold}/>
+          <circle cx="15" cy="18.5" r="1.5" fill={DS.gold}/>
+          <line x1="24" y1="24" x2="24" y2="13" stroke={DS.emerald} strokeWidth="0.75" strokeDasharray="2 1.5"/>
+          <line x1="24" y1="24" x2="33" y2="29.5" stroke={DS.emerald} strokeWidth="0.75" strokeDasharray="2 1.5"/>
+          <line x1="24" y1="24" x2="15" y2="29.5" stroke={DS.emerald} strokeWidth="0.75" strokeDasharray="2 1.5"/>
+        </svg>
+      </div>
+
+      {/* Nombre */}
+      <div style={{
+        opacity: fase >= 0 ? 1 : 0,
+        transition: "opacity 1s ease 0.3s",
+        marginBottom: 8,
+      }}>
+        <div style={{fontSize:42,fontWeight:900,letterSpacing:6,color:DS.emerald,fontFamily:"'Cormorant Garamond', serif",lineHeight:1}}>
+          SCIAT
+        </div>
+        <div style={{fontSize:13,color:DS.gold,letterSpacing:4,fontFamily:"'DM Mono', monospace",marginTop:4}}>
+          PEAK STATE
+        </div>
+      </div>
+
+      {/* Tagline */}
+      <div style={{
+        opacity: fase >= 1 ? 1 : 0,
+        transform: fase >= 1 ? "translateY(0)" : "translateY(10px)",
+        transition: "all 0.8s ease 0.2s",
+        marginTop: 24, marginBottom: 40,
+      }}>
+        <p style={{fontSize:16,color:DS.inkMid,fontFamily:"'Cormorant Garamond', serif",lineHeight:1.6,fontStyle:"italic",maxWidth:300}}>
+          Tu acompañante de rendimiento.<br/>
+          <span style={{color:DS.emerald}}>Deporte · Academia · Organización</span>
+        </p>
+      </div>
+
+      {/* Botón entrar */}
+      <div style={{
+        opacity: fase >= 1 ? 1 : 0,
+        transform: fase >= 1 ? "translateY(0)" : "translateY(16px)",
+        transition: "all 0.6s ease 0.5s",
+        width: "100%", maxWidth: 320,
+      }}>
+        <button
+          onClick={() => { detenerVoz(); onEntrar(); }}
+          aria-label="Entrar a SCIAT Peak State"
+          style={{
+            width:"100%", padding:"18px 24px", borderRadius:14, border:"none",
+            background:`linear-gradient(135deg, ${DS.emerald}, #0099aa)`,
+            color:DS.bg, fontSize:16, fontWeight:700, cursor:"pointer",
+            fontFamily:"'DM Sans', sans-serif", letterSpacing:0.5,
+          }}>
+          ENTRAR →
+        </button>
+        <div style={{marginTop:12,fontSize:11,color:DS.inkMuted,fontFamily:"'DM Mono', monospace",letterSpacing:1}}>
+          Salud · Ciencia · IA · Tecnología
+        </div>
+      </div>
+
+      {/* Indicador de voz */}
+      <div style={{
+        position:"absolute", bottom:30,
+        display:"flex", alignItems:"center", gap:6,
+        opacity: fase >= 1 ? 1 : 0, transition: "opacity 0.5s ease 1s",
+      }}>
+        <span style={{fontSize:12}}>🔊</span>
+        <span style={{fontSize:10,color:DS.inkMuted,fontFamily:"'DM Mono', monospace",letterSpacing:1}}>
+          AUDIO ACTIVADO
+        </span>
+      </div>
+    </div>
+  );
+}
 function Logo({ size=36 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none">
@@ -381,7 +492,11 @@ function PantallaCheck({ onCompletado }) {
           <h2 style={{fontSize:22,fontWeight:700,color:DS.ink,marginBottom:6,fontFamily:"'Cormorant Garamond', serif"}}>¿En qué contexto estás?</h2>
           <p style={{fontSize:13,color:DS.inkMuted,marginBottom:20,fontFamily:"'DM Sans', sans-serif"}}>Selecciona tu situación actual</p>
           {CONTEXTOS.map(c => (
-            <div key={c.id} onClick={() => { setContexto(c.id); setTimeout(()=>setPaso(1),250); }}
+            <div key={c.id} onClick={() => {
+              setContexto(c.id);
+              hablar(`${c.label}. ${c.desc}`);
+              setTimeout(()=>setPaso(1),300);
+            }}
               style={{background:contexto===c.id?DS.emeraldSoft:DS.card,border:`1px solid ${contexto===c.id?DS.emerald:DS.border}`,borderRadius:14,padding:"16px 20px",marginBottom:10,cursor:"pointer",display:"flex",alignItems:"center",gap:14,transition:"all 0.2s"}}>
               <div style={{fontSize:26}}>{c.icono}</div>
               <div>
@@ -470,6 +585,21 @@ function PantallaPerfilPlan({ perfil, onModulo }) {
     if(m.id==="C") return perfil.confianza==="baja"||perfil.confianza==="moderada";
     return true;
   });
+
+  const textoAnalisis = recomendados.length>=3
+    ? "Detecto activación elevada con confianza en desarrollo. Regula primero el cuerpo, luego el pensamiento."
+    : recomendados.length===2
+    ? "Tu estado muestra áreas específicas de mejora. El plan está personalizado para ti."
+    : "Tu estado es sólido. El foco ahora es mantener y afinar tu concentración.";
+
+  const textoPlan = `Tu plan tiene ${recomendados.length} módulos activos. ${recomendados.map(m => m.titulo).join(", ")}.`;
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      hablar(`Check inicial completado. Contexto ${perfil.contexto}, etapa ${perfil.fase}. ${textoAnalisis} ${textoPlan}`);
+    }, 600);
+    return () => clearTimeout(t);
+  }, []);
 
   return (
     <div>
@@ -1115,7 +1245,7 @@ function PantallaModulo({ moduloId, onVolver }) {
 
 // ─── APP PRINCIPAL ────────────────────────────────────────────────────────────
 export default function App() {
-  const [pantalla, setPantalla] = useState("inicio");
+  const [pantalla, setPantalla] = useState("bienvenida");
   const [perfil, setPerfil] = useState(null);
   const [moduloActivo, setModuloActivo] = useState(null);
   const [anim, setAnim] = useState(true);
@@ -1129,10 +1259,10 @@ export default function App() {
     <div style={{
       minHeight:"100vh",
       background:DS.bg,
-      colorScheme:"dark", // ← fuerza modo oscuro en todos los dispositivos
+      colorScheme:"dark",
       fontFamily:"'DM Sans', sans-serif",
       display:"flex",flexDirection:"column",alignItems:"center",
-      padding:"24px 16px 40px",
+      padding: pantalla === "bienvenida" ? "0" : "24px 16px 40px",
     }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap');
@@ -1142,21 +1272,29 @@ export default function App() {
         input, textarea, select { color-scheme: dark; }
       `}</style>
 
-      <div style={{width:"100%",maxWidth:420,opacity:anim?1:0,transform:anim?"translateY(0)":"translateY(12px)",transition:"all 0.25s ease"}}>
-        <Header pantalla={pantalla} onHome={() => ir("inicio")}/>
-        {pantalla==="inicio" && (
-          <PantallaInicio onIniciar={() => ir("check")}/>
-        )}
-        {pantalla==="check" && (
-          <PantallaCheck onCompletado={p => { setPerfil(p); ir("plan"); }}/>
-        )}
-        {pantalla==="plan" && perfil && (
-          <PantallaPerfilPlan perfil={perfil} onModulo={id => { setModuloActivo(id); ir("modulo"); }}/>
-        )}
-        {pantalla==="modulo" && moduloActivo && (
-          <PantallaModulo moduloId={moduloActivo} onVolver={() => ir(perfil?"plan":"inicio")}/>
-        )}
-      </div>
+      {/* Pantalla bienvenida sin wrapper */}
+      {pantalla === "bienvenida" && (
+        <PantallaBienvenida onEntrar={() => ir("inicio")}/>
+      )}
+
+      {/* Resto de pantallas con wrapper animado */}
+      {pantalla !== "bienvenida" && (
+        <div style={{width:"100%",maxWidth:420,opacity:anim?1:0,transform:anim?"translateY(0)":"translateY(12px)",transition:"all 0.25s ease"}}>
+          <Header pantalla={pantalla} onHome={() => ir("inicio")}/>
+          {pantalla==="inicio" && (
+            <PantallaInicio onIniciar={() => ir("check")}/>
+          )}
+          {pantalla==="check" && (
+            <PantallaCheck onCompletado={p => { setPerfil(p); ir("plan"); }}/>
+          )}
+          {pantalla==="plan" && perfil && (
+            <PantallaPerfilPlan perfil={perfil} onModulo={id => { setModuloActivo(id); ir("modulo"); }}/>
+          )}
+          {pantalla==="modulo" && moduloActivo && (
+            <PantallaModulo moduloId={moduloActivo} onVolver={() => ir(perfil?"plan":"inicio")}/>
+          )}
+        </div>
+      )}
     </div>
   );
-} 
+}
