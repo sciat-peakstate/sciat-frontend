@@ -40,7 +40,7 @@ const MODULOS = [
 const BASE = "/audio/es/modulo-A/";
 const AUDIO = {
   A1: {
-    intro: BASE + "A1-intro-respiracion.m4a",
+    intro: BASE + "A1-intro-Respiracion.m4a",
     pasos: [
       BASE + "A1-p1-preparacion.m4a",
       BASE + "A1-p2-inhala.m4a",
@@ -378,7 +378,7 @@ function Header({ pantalla, onHome }) {
         </div>
       </div>
       {pantalla !== "inicio" && (
-        <button onClick={onHome} style={{marginLeft:"auto",background:"transparent",border:`1px solid ${DS.border}`,borderRadius:8,padding:"6px 12px",color:DS.inkMuted,fontSize:12,cursor:"pointer",fontFamily:"'DM Mono', monospace"}}>← Inicio</button>
+        <button onClick={() => { detenerVoz(); onHome(); }} style={{marginLeft:"auto",background:"transparent",border:`1px solid ${DS.border}`,borderRadius:8,padding:"6px 12px",color:DS.inkMuted,fontSize:12,cursor:"pointer",fontFamily:"'DM Mono', monospace"}}>← Inicio</button>
       )}
     </div>
   );
@@ -421,7 +421,7 @@ function PantallaInicio({ onIniciar }) {
           <span style={{fontSize:12,color:DS.emerald,fontFamily:"'DM Sans', sans-serif"}}>Audio con voz del autor disponible en Módulo A</span>
         </div>
 
-        <button onClick={onIniciar} style={{width:"100%",padding:16,borderRadius:12,border:"none",background:`linear-gradient(135deg, ${DS.emerald}, #0099aa)`,color:DS.bg,fontSize:15,fontWeight:700,cursor:"pointer",fontFamily:"'DM Sans', sans-serif",letterSpacing:0.5}}>
+        <button onClick={() => { detenerVoz(); onIniciar(); }} style={{width:"100%",padding:16,borderRadius:12,border:"none",background:`linear-gradient(135deg, ${DS.emerald}, #0099aa)`,color:DS.bg,fontSize:15,fontWeight:700,cursor:"pointer",fontFamily:"'DM Sans', sans-serif",letterSpacing:0.5}}>
           COMENZAR EVALUACIÓN →
         </button>
       </div>
@@ -494,6 +494,7 @@ function PantallaCheck({ onCompletado }) {
           {CONTEXTOS.map(c => (
             <div key={c.id} onClick={() => {
               setContexto(c.id);
+              detenerVoz();
               hablar(`${c.label}. ${c.desc}`);
               setTimeout(()=>setPaso(1),300);
             }}
