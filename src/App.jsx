@@ -40,7 +40,7 @@ const MODULOS = [
 const BASE = "/audio/es/modulo-A/";
 const AUDIO = {
   A1: {
-    intro: BASE + "A1-intro-Respiracion.m4a",
+    intro: BASE + "A1-intro-respiracion.m4a",
     pasos: [
       BASE + "A1-p1-preparacion.m4a",
       BASE + "A1-p2-inhala.m4a",
@@ -84,12 +84,23 @@ const hablar = (texto, rate = 0.88) => {
   u.lang = "es-ES";
   u.rate = rate;
   u.pitch = 1.05;
+  // Las voces pueden no estar cargadas aún — esperamos si es necesario
   const voces = window.speechSynthesis.getVoices();
-  const vozEs = voces.find(v => v.lang.startsWith("es") && v.name.includes("Female"))
-    || voces.find(v => v.lang.startsWith("es"))
-    || voces[0];
-  if(vozEs) u.voice = vozEs;
-  window.speechSynthesis.speak(u);
+  if(voces.length > 0) {
+    const vozEs = voces.find(v => v.lang.startsWith("es") && v.name.includes("Female"))
+      || voces.find(v => v.lang.startsWith("es"))
+      || voces[0];
+    if(vozEs) u.voice = vozEs;
+    window.speechSynthesis.speak(u);
+  } else {
+    // Esperar a que se carguen las voces
+    window.speechSynthesis.onvoiceschanged = () => {
+      const v2 = window.speechSynthesis.getVoices();
+      const vozEs = v2.find(v => v.lang.startsWith("es")) || v2[0];
+      if(vozEs) u.voice = vozEs;
+      window.speechSynthesis.speak(u);
+    };
+  }
 };
 const detenerVoz = () => { if(window.speechSynthesis) window.speechSynthesis.cancel(); };
 
@@ -238,7 +249,7 @@ const EJERCICIOS = {
 // ─── PANTALLA BIENVENIDA ──────────────────────────────────────────────────────
 function PantallaBienvenida({ onEntrar }) {
   const [fase, setFase] = useState(0); // 0=animando 1=listo
-  const textoVoz = "Hola. Soy SCIAT Peak State. Te acompaño a optimizar tu potencial bajo presión. Deporte, academia, organización — el método es el mismo. Vamos.";
+  const textoVoz = "Hola. Soy SCIAT Peak State. Te acompaño en esta etapa. Vamos, tú puedes.";
 
   useEffect(() => {
     const t1 = setTimeout(() => setFase(1), 2800);
@@ -1252,6 +1263,7 @@ export default function App() {
   const [anim, setAnim] = useState(true);
 
   const ir = destino => {
+    detenerVoz();
     setAnim(false);
     setTimeout(() => { setPantalla(destino); setAnim(true); }, 150);
   };
@@ -1298,4 +1310,4 @@ export default function App() {
       )}
     </div>
   );
-} 
+}
