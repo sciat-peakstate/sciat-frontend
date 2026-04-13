@@ -41,6 +41,7 @@ const BASE = "/audio/es/modulo-A/";
 const AUDIO = {
   A1: {
     intro: BASE + "A1-intro-respiracion.m4a",
+    introDur: 12,
     pasos: [
       BASE + "A1-p1-preparacion.m4a",
       BASE + "A1-p2-inhala.m4a",
@@ -53,6 +54,7 @@ const AUDIO = {
   },
   A2: {
     intro: BASE + "A2-intro-relajacion.m4a",
+    introDur: 12,
     pasos: [
       BASE + "A2-p1-preparacion.m4a",
       BASE + "A2-p2-manos-tension.m4a",
@@ -66,6 +68,7 @@ const AUDIO = {
   },
   A3: {
     intro: BASE + "A3-intro-activacion.m4a",
+    introDur: 8,
     pasos: [
       BASE + "A3-p1-activacion-inicial.m4a",
       BASE + "A3-p2-respiracion-activa.m4a",
@@ -108,31 +111,31 @@ const EJERCICIOS = {
   A: [
     { id:"A1", icono:"🫁", titulo:"Respiración 4-7-8", dur:"4 min", desc:"Activa el sistema nervioso parasimpático en minutos.",
       pasos:[
-        { t:"Encuentra una postura cómoda. Cierra los ojos si puedes.", s:5 },
-        { t:"Inhala por la nariz contando hasta 4. Lento, profundo, sin forzar.", s:4 },
-        { t:"Retén el aire contando hasta 7. Mantén la calma. Tu cuerpo sabe qué hacer.", s:7 },
-        { t:"Exhala completamente por la boca contando hasta 8. Suelta toda la tensión.", s:8 },
-        { t:"Repite el ciclo. Inhala 4, retén 7, exhala 8. Vas muy bien.", s:19 },
-        { t:"Un ciclo más. Cada respiración te acerca a tu estado óptimo.", s:19 },
-        { t:"Abre los ojos suavemente. Observa cómo se siente tu cuerpo. Eso es regulación.", s:6 },
+        { t:"Encuentra una postura cómoda. Cierra los ojos si puedes.", s:11 },
+        { t:"Inhala por la nariz contando hasta 4. Lento, profundo, sin forzar.", s:11 },
+        { t:"Retén el aire contando hasta 7. Mantén la calma. Tu cuerpo sabe qué hacer.", s:17 },
+        { t:"Exhala completamente por la boca contando hasta 8. Suelta toda la tensión.", s:18 },
+        { t:"Repite el ciclo. Inhala 4, retén 7, exhala 8. Vas muy bien.", s:12 },
+        { t:"Un ciclo más. Cada respiración te acerca a tu estado óptimo.", s:6 },
+        { t:"Abre los ojos suavemente. Observa cómo se siente tu cuerpo. Eso es regulación.", s:9 },
       ]},
     { id:"A2", icono:"💆", titulo:"Relajación Muscular Progresiva", dur:"6 min", desc:"Libera la tensión acumulada con la técnica de Jacobson adaptada.",
       pasos:[
-        { t:"Siéntate cómodamente. Pies en el suelo. Dos respiraciones profundas.", s:8 },
-        { t:"Aprieta los puños con fuerza durante 5 segundos. Siente la tensión.", s:5 },
-        { t:"Suelta. Observa la diferencia entre tensión y relajación.", s:8 },
-        { t:"Hombros hacia las orejas con fuerza máxima. Mantén 5 segundos.", s:5 },
+        { t:"Encuentra una posición cómoda — de pie, sentado o en movimiento. Lleva tu atención al cuerpo.", s:10 },
+        { t:"Aprieta los puños con fuerza durante 5 segundos. Siente la tensión.", s:9 },
+        { t:"Suelta. Observa la diferencia entre tensión y relajación.", s:10 },
+        { t:"Hombros hacia las orejas con fuerza máxima. Mantén 5 segundos.", s:8 },
         { t:"Suelta los hombros completamente. Déjalos caer. Siente el peso que se va.", s:8 },
-        { t:"Aprieta los ojos y frunce el ceño. Todo el rostro tenso. 5 segundos.", s:5 },
-        { t:"Suelta todo el rostro. Mandíbula floja. Frente suave. Ojos sin esfuerzo.", s:8 },
-        { t:"Escanea tu cuerpo de arriba abajo. Está más ligero. Llevas esa calma contigo.", s:10 },
+        { t:"Aprieta los ojos y frunce el ceño. Todo el rostro tenso. 5 segundos.", s:9 },
+        { t:"Suelta todo el rostro. Mandíbula floja. Frente suave. Ojos sin esfuerzo.", s:11 },
+        { t:"Escanea tu cuerpo de arriba abajo. Está más ligero. Llevas esa calma contigo.", s:13 },
       ]},
     { id:"A3", icono:"⚡", titulo:"Activación Controlada", dur:"3 min", desc:"Actívate cuando tu energía está baja antes de la etapa.",
       pasos:[
-        { t:"De pie. Sacude las manos con fuerza 10 segundos. Despierta el cuerpo.", s:10 },
-        { t:"Inhala rápido por la nariz, exhala fuerte por la boca. 5 veces seguidas.", s:15 },
-        { t:"Di en voz alta: Estoy listo. Estoy preparado. Este momento es mío.", s:8 },
-        { t:"Salta en el lugar 10 veces. Liviano, rítmico. Conecta mente y cuerpo.", s:15 },
+        { t:"De pie. Sacude las manos con fuerza 10 segundos. Despierta el cuerpo.", s:8 },
+        { t:"Inhala rápido por la nariz, exhala fuerte por la boca. 5 veces seguidas.", s:8 },
+        { t:"Di en voz alta: Estoy listo. Estoy preparado. Este momento es mío.", s:10 },
+        { t:"Salta en el lugar 10 veces. Liviano, rítmico. Conecta mente y cuerpo.", s:7 },
         { t:"Para. Respira. Siente la energía circulando. Eso es activación óptima. Úsala.", s:8 },
       ]},
   ],
@@ -1120,6 +1123,8 @@ function EjercicioActivo({ ejercicio, moduloId, onVolver }) {
   const durPaso = paso >= 0 ? ejercicio.pasos[paso].s : 1;
   const progreso = paso >= 0 ? ((durPaso - segundos) / durPaso) * circ : 0;
   const textoActual = paso >= 0 ? ejercicio.pasos[paso].t : "Escucha la introducción y pulsa INICIAR cuando estés listo.";
+  const durIntro = audioData?.introDur || 10;
+  const segundosIntro = paso === -1 ? durIntro : 0;
 
   return (
     <div>
@@ -1356,4 +1361,4 @@ export default function App() {
       )}
     </div>
   );
-} 
+}
