@@ -399,48 +399,81 @@ function Header({ pantalla, onHome }) {
 function PantallaInicio({ onIniciar }) {
   return (
     <div>
-      {/* Saludo cercano */}
-      <div style={{marginBottom:24}}>
-        <h1 style={{fontSize:32,fontWeight:300,color:DS.ink,fontFamily:"'Cormorant Garamond', serif",lineHeight:1.2,marginBottom:4}}>
-          Hola,<br/>
-          <span style={{fontWeight:700,color:DS.emerald,fontStyle:"italic"}}>¿cómo estás hoy?</span>
+      {/* Hero principal — diseño oscuro original */}
+      <div style={{
+        background:`linear-gradient(135deg, #0d1520, #0a0f1e)`,
+        border:`1px solid ${DS.emeraldBorder}`,
+        borderRadius:20, padding:28, marginBottom:16,
+        position:"relative", overflow:"hidden",
+      }}>
+        <div style={{position:"absolute",top:-40,right:-40,width:200,height:200,borderRadius:"50%",background:`radial-gradient(circle, ${DS.emeraldSoft} 0%, transparent 70%)`}}/>
+        <div style={{position:"absolute",bottom:-30,left:-30,width:150,height:150,borderRadius:"50%",background:`radial-gradient(circle, ${DS.goldSoft} 0%, transparent 70%)`}}/>
+
+        {/* Título principal */}
+        <h1 style={{
+          fontSize:34, fontWeight:700, color:DS.ink,
+          fontFamily:"'Cormorant Garamond', serif",
+          lineHeight:1.15, marginBottom:16, position:"relative",
+        }}>
+          Rinde mejor<br/>
+          <span style={{color:DS.emerald, fontStyle:"italic"}}>bajo presión</span>
+          <span style={{marginLeft:10, fontSize:28}}>⚡</span>
         </h1>
-        <div style={{fontSize:12,color:DS.inkMuted,fontFamily:"'DM Mono', monospace",letterSpacing:1}}>
-          {new Date().toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long"})}
-        </div>
-      </div>
 
-      {/* Check inicial prominente */}
-      <div style={{background:`linear-gradient(135deg, ${DS.card}, #0d1520)`,border:`1px solid ${DS.emeraldBorder}`,borderRadius:20,padding:28,marginBottom:16,position:"relative",overflow:"hidden"}}>
-        <div style={{position:"absolute",top:-40,right:-40,width:160,height:160,borderRadius:"50%",background:`radial-gradient(circle, ${DS.emeraldSoft} 0%, transparent 70%)`}}/>
-        <div style={{position:"absolute",bottom:-30,left:-30,width:120,height:120,borderRadius:"50%",background:`radial-gradient(circle, ${DS.goldSoft} 0%, transparent 70%)`}}/>
-
-        <div style={{fontSize:11,color:DS.gold,fontFamily:"'DM Mono', monospace",letterSpacing:2,marginBottom:10}}>
-          CHECK INICIAL
-        </div>
-        <h2 style={{fontSize:22,fontWeight:700,color:DS.ink,fontFamily:"'Cormorant Garamond', serif",lineHeight:1.3,marginBottom:8}}>
-          Evalúa tu estado<br/>
-          <span style={{color:DS.emerald,fontStyle:"italic"}}>y recibe tu plan</span>
-        </h2>
-        <p style={{fontSize:13,color:DS.inkMuted,fontFamily:"'DM Sans', sans-serif",lineHeight:1.6,marginBottom:16}}>
-          3 pasos · Personalizado para tu etapa de presión
+        {/* Descripción */}
+        <p style={{
+          fontSize:14, color:DS.inkMuted,
+          fontFamily:"'DM Sans', sans-serif",
+          lineHeight:1.65, marginBottom:20, position:"relative",
+        }}>
+          Herramientas de alto rendimiento adaptadas a tu etapa.
+          Deporte, academia u organización — el método es el mismo.
         </p>
 
-        {/* Indicador de audio */}
-        <div style={{display:"flex",alignItems:"center",gap:8,background:"rgba(0,212,170,0.08)",borderRadius:8,padding:"8px 12px",marginBottom:20,border:`1px solid ${DS.emeraldBorder}`}}>
-          <span style={{fontSize:16}}>🎙️</span>
-          <span style={{fontSize:12,color:DS.emerald,fontFamily:"'DM Sans', sans-serif"}}>Audio con voz del autor disponible en Módulo A</span>
+        {/* Checks */}
+        <div style={{marginBottom:24, position:"relative"}}>
+          {[
+            "Evaluación por etapa de presión",
+            "Check inicial de estado",
+            "Acompañamiento post actividad",
+          ].map((f,i) => (
+            <div key={i} style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
+              <div style={{
+                width:20, height:20, borderRadius:6, flexShrink:0,
+                background:DS.emeraldSoft, border:`1px solid ${DS.emeraldBorder}`,
+                display:"flex", alignItems:"center", justifyContent:"center",
+              }}>
+                <span style={{fontSize:11, color:DS.emerald}}>✓</span>
+              </div>
+              <span style={{fontSize:13, color:DS.inkMid, fontFamily:"'DM Sans', sans-serif"}}>{f}</span>
+            </div>
+          ))}
         </div>
 
-        <button onClick={() => { detenerVoz(); onIniciar(); }} style={{width:"100%",padding:16,borderRadius:12,border:"none",background:`linear-gradient(135deg, ${DS.emerald}, #0099aa)`,color:DS.bg,fontSize:15,fontWeight:700,cursor:"pointer",fontFamily:"'DM Sans', sans-serif",letterSpacing:0.5}}>
+        {/* CTA */}
+        <button
+          onClick={() => { detenerVoz(); onIniciar(); }}
+          style={{
+            width:"100%", padding:"16px 24px", borderRadius:12, border:"none",
+            background:`linear-gradient(135deg, ${DS.emerald}, #0099aa)`,
+            color:DS.bg, fontSize:15, fontWeight:700, cursor:"pointer",
+            fontFamily:"'DM Sans', sans-serif", letterSpacing:0.5,
+            position:"relative",
+          }}>
           COMENZAR EVALUACIÓN →
         </button>
       </div>
 
       {/* Accesibilidad */}
-      <div style={{display:"flex",alignItems:"center",gap:8,padding:"10px 14px",background:DS.emeraldSoft,borderRadius:10,border:`1px solid ${DS.emeraldBorder}`}}>
+      <div style={{
+        display:"flex", alignItems:"center", gap:8,
+        padding:"10px 14px", background:DS.emeraldSoft,
+        borderRadius:10, border:`1px solid ${DS.emeraldBorder}`,
+      }}>
         <span style={{fontSize:14}}>♿</span>
-        <span style={{fontSize:11,color:DS.emerald,fontFamily:"'DM Sans', sans-serif"}}>Subtítulos CC · Audio con voz del autor · Accesible</span>
+        <span style={{fontSize:11,color:DS.emerald,fontFamily:"'DM Sans', sans-serif"}}>
+          Subtítulos CC · Audio con voz del autor · Accesible
+        </span>
       </div>
     </div>
   );
@@ -1199,8 +1232,20 @@ function PantallaModulo({ moduloId, onVolver }) {
   const [seleccionado, setSeleccionado] = useState(null);
   const tieneAudio = moduloId === "A";
 
+  useEffect(() => {
+    const textos = {
+      A: "Módulo A. Regulación de Activación. Tienes tres ejercicios disponibles con audio de voz del autor.",
+      B: "Módulo B. Control del Pensamiento. Tres ejercicios para silenciar el ruido mental.",
+      C: "Módulo C. Construcción de Confianza. Activa tu historial de éxitos.",
+      D: "Módulo D. Foco y Concentración. Ancla tu atención al presente.",
+      E: "Módulo E. Seguimiento y Evolución. Para después de tu etapa.",
+    };
+    const t = setTimeout(() => hablar(textos[moduloId] || ""), 400);
+    return () => clearTimeout(t);
+  }, [moduloId]);
+
   if(seleccionado) return (
-    <EjercicioActivo ejercicio={seleccionado} moduloId={moduloId} onVolver={() => setSeleccionado(null)}/>
+    <EjercicioActivo ejercicio={seleccionado} moduloId={moduloId} onVolver={() => { detenerVoz(); setSeleccionado(null); }}/>
   );
 
   return (
@@ -1263,7 +1308,8 @@ export default function App() {
   const [anim, setAnim] = useState(true);
 
   const ir = destino => {
-    detenerVoz();
+    // Solo detener voz si navegamos HACIA una pantalla funcional, no desde bienvenida
+    if(destino !== "inicio") detenerVoz();
     setAnim(false);
     setTimeout(() => { setPantalla(destino); setAnim(true); }, 150);
   };
