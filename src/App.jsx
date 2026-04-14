@@ -107,6 +107,25 @@ const hablar = (texto, rate = 0.88) => {
 };
 const detenerVoz = () => { if(window.speechSynthesis) window.speechSynthesis.cancel(); };
 
+// ─── AUDIO BIENVENIDA (voz de autor) ─────────────────────────────────────────
+// Archivo: public/audio/bienvenida.m4a
+const audioBienvenidaRef = { current: null };
+const reproducirBienvenida = () => {
+  const a = new Audio("/audio/bienvenida.m4a");
+  audioBienvenidaRef.current = a;
+  a.play().catch(() => {
+    // Archivo no subido aún — usa Web Speech como respaldo
+    hablar("Hola. Soy SCIAT Peak State. Te acompaño en esta etapa. Vamos, tú puedes.");
+  });
+};
+const detenerBienvenida = () => {
+  if(audioBienvenidaRef.current) {
+    audioBienvenidaRef.current.pause();
+    audioBienvenidaRef.current = null;
+  }
+  detenerVoz();
+};
+
 const EJERCICIOS = {
   A: [
     { id:"A1", icono:"🫁", titulo:"Respiración 4-7-8", dur:"4 min", desc:"Activa el sistema nervioso parasimpático en minutos.",
@@ -121,7 +140,7 @@ const EJERCICIOS = {
       ]},
     { id:"A2", icono:"💆", titulo:"Relajación Muscular Progresiva", dur:"6 min", desc:"Libera la tensión acumulada con la técnica de Jacobson adaptada.",
       pasos:[
-        { t:"Encuentra una posición cómoda — de pie, sentado o en movimiento. Lleva tu atención al cuerpo.", s:10 },
+        { t:"Donde estés — de pie, sentado o en movimiento — lleva tu atención al cuerpo. Dos respiraciones profundas. Inhala... exhala. Una más. Inhala... exhala.", s:26 },
         { t:"Aprieta los puños con fuerza durante 5 segundos. Siente la tensión.", s:9 },
         { t:"Suelta. Observa la diferencia entre tensión y relajación.", s:10 },
         { t:"Hombros hacia las orejas con fuerza máxima. Mantén 5 segundos.", s:8 },
@@ -257,9 +276,9 @@ function PantallaBienvenida({ onEntrar }) {
   useEffect(() => {
     const t1 = setTimeout(() => setFase(1), 2800);
     const t2 = setTimeout(() => {
-      hablar(textoVoz, 0.85);
+      reproducirBienvenida();
     }, 600);
-    return () => { clearTimeout(t1); clearTimeout(t2); detenerVoz(); };
+    return () => { clearTimeout(t1); clearTimeout(t2); detenerBienvenida(); };
   }, []);
 
   return (
@@ -332,7 +351,7 @@ function PantallaBienvenida({ onEntrar }) {
         width: "100%", maxWidth: 320,
       }}>
         <button
-          onClick={() => { detenerVoz(); onEntrar(); }}
+          onClick={() => { detenerBienvenida(); onEntrar(); }}
           aria-label="Entrar a SCIAT Peak State"
           style={{
             width:"100%", padding:"18px 24px", borderRadius:14, border:"none",
@@ -1054,9 +1073,11 @@ function EjercicioActivo({ ejercicio, moduloId, onVolver }) {
   };
 
   useEffect(() => {
-    // Al montar — reproducir intro si existe
+    // Al montar — reproducir intro automáticamente si existe
     if(paso === -1 && tieneAudio && audioOn) {
-      reproducirAudio(audioData.intro);
+      // Pequeño delay para que el navegador móvil permita el audio tras interacción previa
+      const t = setTimeout(() => reproducirAudio(audioData.intro), 300);
+      return () => clearTimeout(t);
     }
   }, []);
 
@@ -1064,10 +1085,12 @@ function EjercicioActivo({ ejercicio, moduloId, onVolver }) {
     return () => { clearInterval(timerRef.current); detenerAudio(); };
   }, []);
 
+  // Auto-inicia el ejercicio completo al tocar INICIAR — sin necesidad de pausar/continuar
   const iniciarPaso = (numPaso) => {
-    const duracion = ejercicio.pasos[numPaso].s;
+    const duracion = ejercicio.pasos[numPaso].s + 2; // +2s buffer para que el audio termine bien
     setSegundos(duracion);
     setCorriendo(true);
+    // Reproducir audio del paso automáticamente
     if(tieneAudio && audioData.pasos[numPaso]) {
       reproducirAudio(audioData.pasos[numPaso]);
     }
