@@ -38,6 +38,7 @@ const MODULOS = [
 
 // ─── RUTAS DE AUDIO — nombres limpios en public/audio/es/modulo-A/ ───────────
 const BASE = "/audio/es/modulo-A/";
+const BASE_CHECK = "/audio/es/check/";
 const AUDIO = {
   A1: {
     intro: BASE + "A1-intro-respiracion.m4a",
@@ -79,6 +80,13 @@ const AUDIO = {
   },
 };
 
+// Audios del Check inicial — contexto
+const AUDIO_CHECK = {
+  deportivo:       BASE_CHECK + "check-deportivo.m4a",
+  academico:       BASE_CHECK + "check-academico.m4a",
+  organizacional:  BASE_CHECK + "check-organizacional.m4a",
+};
+
 // ─── WEB SPEECH ───────────────────────────────────────────────────────────────
 const hablar = (texto, rate = 0.88) => {
   if(!window.speechSynthesis) return;
@@ -108,13 +116,12 @@ const hablar = (texto, rate = 0.88) => {
 const detenerVoz = () => { if(window.speechSynthesis) window.speechSynthesis.cancel(); };
 
 // ─── AUDIO BIENVENIDA (voz de autor) ─────────────────────────────────────────
-// Archivo: public/audio/bienvenida.m4a
+// Archivo: public/audio/es/bienvenida.m4a
 const audioBienvenidaRef = { current: null };
 const reproducirBienvenida = () => {
-  const a = new Audio("/audio/bienvenida.m4a");
+  const a = new Audio("/audio/es/bienvenida.m4a");
   audioBienvenidaRef.current = a;
   a.play().catch(() => {
-    // Archivo no subido aún — usa Web Speech como respaldo
     hablar("Hola. Soy SCIAT Peak State. Te acompaño en esta etapa. Vamos, tú puedes.");
   });
 };
@@ -561,7 +568,9 @@ function PantallaCheck({ onCompletado }) {
             <div key={c.id} onClick={() => {
               setContexto(c.id);
               detenerVoz();
-              hablar(`${c.label}. ${c.desc}`);
+              // Reproducir audio de autor si existe, si no usa Web Speech
+              const audioCtx = new Audio(AUDIO_CHECK[c.id]);
+              audioCtx.play().catch(() => hablar(`${c.label}. ${c.desc}`));
               setTimeout(()=>setPaso(1),300);
             }}
               style={{background:contexto===c.id?DS.emeraldSoft:DS.card,border:`1px solid ${contexto===c.id?DS.emerald:DS.border}`,borderRadius:14,padding:"16px 20px",marginBottom:10,cursor:"pointer",display:"flex",alignItems:"center",gap:14,transition:"all 0.2s"}}>
@@ -1090,22 +1099,41 @@ function EjercicioActivo({ ejercicio, moduloId, onVolver }) {
     const duracion = ejercicio.pasos[numPaso].s + 2; // +2s buffer para que el audio termine bien
     setSegundos(duracion);
     setCorriendo(true);
-    // Reproducir audio del paso automáticamente
+
+    // Reproducir audio del paso — cuando termina, avanza automáticamente
     if(tieneAudio && audioData.pasos[numPaso]) {
-      reproducirAudio(audioData.pasos[numPaso]);
+      const a = new Audio(audioData.pasos[numPaso]);
+      audioRef.current = a;
+      a.play().catch(() => {});
+      // Avance automático al terminar el audio
+      a.onended = () => {
+        clearInterval(timerRef.current);
+        const sig = numPaso + 1;
+        if(sig < ejercicio.pasos.length) {
+          setPaso(sig);
+          iniciarPaso(sig);
+        } else {
+          setCorriendo(false);
+          setCompletado(true);
+        }
+      };
     }
+
     clearInterval(timerRef.current);
     timerRef.current = setInterval(() => {
       setSegundos(s => {
         if(s <= 1) {
           clearInterval(timerRef.current);
-          const sig = numPaso + 1;
-          if(sig < ejercicio.pasos.length) {
-            setPaso(sig);
-            iniciarPaso(sig);
-          } else {
-            setCorriendo(false);
-            setCompletado(true);
+          // Si no hay audio, avanza por tiempo
+          if(!tieneAudio || !audioData.pasos[numPaso]) {
+            const sig = numPaso + 1;
+            if(sig < ejercicio.pasos.length) {
+              setPaso(sig);
+              iniciarPaso(sig);
+            } else {
+              setCorriendo(false);
+              setCompletado(true);
+            }
           }
           return 0;
         }
