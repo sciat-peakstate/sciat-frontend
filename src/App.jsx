@@ -27,6 +27,8 @@ const MODULOS = [
 const A = "/audio/es/modulo-A/";
 const B = "/audio/es/modulo-B/";
 const C = "/audio/es/modulo-C/";
+const D = "/audio/es/modulo-D/";
+const E = "/audio/es/modulo-E/";
 const AUDIO = {
   A1:{ intro:A+"A1-intro-respiracion.m4a", introDur:12,
     pasos:[A+"A1-p1-preparacion.m4a",A+"A1-p2-inhala.m4a",A+"A1-p3-reten.m4a",
@@ -48,8 +50,8 @@ const AUDIO = {
            B+"B2-p5-redirige.m4a",B+"B2-p6-cierre.m4a"] },
   B3:{ intro:B+"B3-intro-visualizacion-de-ejecu.m4a", introDur:14,
     pasos:[B+"B3-p2-cierra-los-ojos.m4a",B+"B3-p3-tu-cuerpo.m4a",
-           B+"B3-p4-la ejecucion.m4a",B+"B3-p5-el momento-dificil.m4a",
-           B+"B3-p6-el cierre.m4a",B+"B3-p7-regresa.m4a"] },
+           B+"B3-p4-la-ejecucion.m4a",B+"B3-p5-el-momento-dificil.m4a",
+           B+"B3-p6-el-cierre.m4a",B+"B3-p7-regresa.m4a"] },
   // Módulo C — intro + pasos desde p2
   C1:{ intro:C+"C1-intro-construccion-de-confia.m4a", introDur:13,
     pasos:[C+"C1-p2-logro-reciente.m4a",C+"C1-p3-logro-dificil.m4a",
@@ -60,6 +62,23 @@ const AUDIO = {
   C3:{ intro:C+"C3-intro-dialogo-interno-positiv.m4a", introDur:12,
     pasos:[C+"C3-p2-que-te-dices.m4a",C+"C3-p3-la-transformacion.m4a",
            C+"C3-p4-tu-frase.m4a",C+"C3-p5-ditela.m4a",C+"C3-p6-cierre.m4a"] },
+  // ─── MÓDULO D — D1:p2,p4,p6 / D2:p2-p5 / D3:p2,p4,p6 ─────────────────────
+  D1:{ intro:D+"D1-intro-foco-y-concentracion.m4a", introDur:15,
+    pasos:[D+"D1-p2-el-circulo.m4a", D+"D1-p4-tecnica321.m4a", D+"D1-p6-cierre.m4a"] },
+  D2:{ intro:D+"D2-intro-calentamiento-mental.m4a", introDur:13,
+    pasos:[D+"D2-p2-activa.m4a", D+"D2-p3-contextualiza.m4a",
+           D+"D2-p4-anticipa.m4a", D+"D2-p5-cierre.m4a"] },
+  D3:{ intro:D+"D3-intro-control-del-momento-presente.m4a", introDur:15,
+    pasos:[D+"D3-p2-el-ancla.m4a", D+"D3-p4-la-respuesta.m4a", D+"D3-p6-cierre.m4a"] },
+  // ─── MÓDULO E — intro + p1,p2,p3... ─────────────────────────────────────────
+  E1:{ intro:E+"E1-intro-seguimiento-y-evolucion.m4a", introDur:14,
+    pasos:[E+"E1-p1-lo-que-funciono.m4a", E+"E1-p2-lo-que-mejorar.m4a",
+           E+"E1-p3-aprendizaje.m4a", E+"E1-p4-cierre.m4a"] },
+  E2:{ intro:E+"E2-intro-cierre-emocional.m4a", introDur:13,
+    pasos:[E+"E2-p1-reconoce.m4a", E+"E2-p2-suelta.m4a",
+           E+"E2-p3-reconoce-el-esfuerzo.m4a", E+"E2-p4-cierre.m4a"] },
+  E3:{ intro:E+"E3-intro-evolucion-personal.m4a", introDur:16,
+    pasos:[E+"E3-p1-lo-que-sciat-identifica.m4a", E+"E3-p2-cierre.m4a"] },
 };
 
 // ─── EJERCICIOS ───────────────────────────────────────────────────────────────
@@ -152,54 +171,43 @@ const EJERCICIOS = {
   D:[
     { id:"D1", icono:"🎯", titulo:"Atención Selectiva", dur:"4 min", desc:"Filtra el ruido y amplifica la señal que importa.",
       pasos:[
-        { t:"Imagina un círculo. Dentro solo lo que puedes controlar ahora mismo.", s:18 },
-        { t:"¿Cuál es la única cosa que necesitas ejecutar bien en este momento?", s:12 },
-        { t:"Cuando aparezca una distracción: 3 cosas que ves, 2 sensaciones, 1 foco.", s:18 },
-        { t:"Aplica el 3-2-1 ahora mismo. Tres cosas que ves. Dos en el cuerpo. Un foco.", s:20 },
+        { t:"Imagina un círculo. Dentro solo lo que puedes controlar ahora mismo.", s:15 },
+        { t:"Aplica el 3-2-1: 3 cosas que ves, 2 sensaciones en el cuerpo, 1 foco concreto.", s:17 },
         { t:"No importa cuántas veces te distraigas. Solo importa cuántas veces vuelves.", s:12 },
       ]},
     { id:"D2", icono:"🔆", titulo:"Calentamiento Mental", dur:"5 min", desc:"Lleva tu mente a su punto óptimo antes de la etapa.",
       pasos:[
-        { t:"Responde mentalmente: ¿Cuál es tu nombre? ¿Dónde estás? ¿Qué día es hoy?", s:16 },
-        { t:"¿Qué vas a hacer? ¿Cuál es el objetivo concreto? ¿Qué has preparado?", s:20 },
-        { t:"Imagina el primer minuto de tu etapa. Los primeros movimientos y decisiones.", s:20 },
-        { t:"Hoy voy a dar lo mejor que tengo en este momento. No lo de ayer — lo de ahora.", s:10 },
-        { t:"Mente activada, contextualizada y enfocada. Llévalo a tu etapa.", s:8 },
+        { t:"Actívate. ¿Cuál es tu nombre? ¿Dónde estás? ¿Qué vas a hacer?", s:14 },
+        { t:"Contextualiza. ¿Qué has preparado? ¿Qué sabes que puedes hacer bien?", s:14 },
+        { t:"Anticipa. Imagina el primer minuto de tu etapa. Los primeros movimientos.", s:13 },
+        { t:"Mente activada, contextualizada y enfocada. Llévalo a tu etapa.", s:11 },
       ]},
     { id:"D3", icono:"⏱️", titulo:"Control del Momento Presente", dur:"6 min", desc:"Ancla toda tu energía en el único momento donde puedes actuar.",
       pasos:[
-        { t:"Cierra los ojos. Lleva tu atención a tu respiración. Solo obsérvala.", s:25 },
-        { t:"¿Qué pensamiento te arrastra fuera del momento cuando estás bajo presión?", s:20 },
-        { t:"Cuando aparezca di: Eso es el futuro. Ahora estoy aquí. Y regresa.", s:16 },
-        { t:"Deja que el pensamiento aparezca. Obsérvalo. Ahora regresa al presente.", s:15 },
-        { t:"Cada vez que practicas este retorno, se vuelve más rápido y automático.", s:10 },
+        { t:"Encuentra tu ancla. Lleva tu atención a tu respiración. Solo obsérvala.", s:20 },
+        { t:"Cuando aparezca un pensamiento que te saque — obsérvalo y regresa al presente.", s:14 },
+        { t:"Cada vez que practicas este retorno, se vuelve más rápido y automático.", s:16 },
       ]},
   ],
   E:[
     { id:"E1", icono:"📊", titulo:"Análisis de Desempeño", dur:"8 min", desc:"Convierte la experiencia en aprendizaje estructurado.",
       pasos:[
-        { t:"Sin juicio — con curiosidad. Convierte esta etapa en información útil.", s:12 },
-        { t:"¿Cómo evalúas tu rendimiento general en esta etapa?", s:20 },
-        { t:"¿Cómo estaba tu estado mental? ¿Enfocado o alterado?", s:20 },
-        { t:"¿Qué hiciste bien? ¿Qué funcionó como lo planeaste o mejor?", s:30 },
-        { t:"¿Qué cambiarías? No lo que salió mal — lo que harías diferente.", s:30 },
-        { t:"Si te quedaras con una sola lección de esta etapa, ¿cuál sería?", s:30 },
-        { t:"Eso es crecimiento estructurado. Cada etapa analizada te hace mejor.", s:10 },
+        { t:"¿Qué funcionó bien en esta etapa? ¿Qué hiciste que puedes repetir?", s:10 },
+        { t:"¿Qué puedes mejorar? No lo que salió mal — lo que harías diferente.", s:9 },
+        { t:"¿Cuál es el aprendizaje clave que te llevas de esta etapa?", s:8 },
+        { t:"Eso es crecimiento estructurado. Cada etapa analizada te hace mejor.", s:12 },
       ]},
     { id:"E2", icono:"🌿", titulo:"Cierre Emocional", dur:"5 min", desc:"Completa el ciclo emocional después de la presión.",
       pasos:[
-        { t:"Sin juzgarlo — reconoce lo que sientes. Todo eso es parte del proceso.", s:18 },
-        { t:"Imagina que la etapa es algo que sostienes. Con cada exhale, relaja el agarre.", s:20 },
-        { t:"Haz un gesto de cierre. Ese gesto le dice al cuerpo que puede soltar.", s:12 },
-        { t:"Reconoce que te presentaste. Que diste lo que tenías. Eso siempre vale.", s:14 },
-        { t:"El siguiente paso es descansar. No analizar. No planificar. Solo descansar.", s:10 },
+        { t:"Reconoce lo que sientes sin juzgarlo. Todo eso es parte del proceso.", s:15 },
+        { t:"Suelta. Con cada exhale relaja el agarre sobre esta etapa.", s:14 },
+        { t:"Reconoce tu esfuerzo. Te presentaste y diste lo que tenías. Eso siempre vale.", s:12 },
+        { t:"El siguiente paso es descansar. No analizar. No planificar. Solo descansar.", s:13 },
       ]},
     { id:"E3", icono:"📈", titulo:"Evolución Personal", dur:"6 min", desc:"Observa tu patrón de crecimiento con ayuda de la IA.",
       pasos:[
-        { t:"Cada etapa registrada forma un patrón que la IA aprende sobre ti.", s:14 },
-        { t:"La IA identifica cuándo sueles tener ansiedad alta y qué técnicas te regulan mejor.", s:16 },
-        { t:"Con el tiempo detecta tus fortalezas recurrentes en tus mejores etapas.", s:14 },
-        { t:"No hay etapas buenas o malas. Hay etapas con información. Cuantas más registres, mejor.", s:12 },
+        { t:"Lo que SCIAT identifica en tus sesiones — tus patrones reales bajo presión.", s:18 },
+        { t:"Con el tiempo esto te muestra cuándo rindes mejor y qué técnicas funcionan para ti.", s:12 },
       ]},
   ],
 };
@@ -226,12 +234,25 @@ const hablar = (texto, rate=0.88) => {
 };
 const detenerVoz = () => { if(window.speechSynthesis) window.speechSynthesis.cancel(); };
 
-// Audio bienvenida — voz de autor desde public/audio/es/bienvenida/bienvenida.m4a
+// ─── REPRODUCTOR UNIVERSAL — funciona en iOS, Android Chrome, Desktop ─────────
+// Android Chrome bloquea audio hasta primera interacción del usuario.
+// La solución: reproducir SIEMPRE desde un handler onClick, nunca automáticamente.
+const reproducirAudioUrl = (url, onEnded) => {
+  try {
+    const a = new Audio(url);
+    a.preload = "auto";
+    if(onEnded) a.onended = onEnded;
+    a.onerror = () => {}; // silencioso si no existe
+    const p = a.play();
+    if(p) p.catch(()=>{});
+    return a;
+  } catch(e) { return null; }
+};
+
+// Audio bienvenida — public/audio/es/bienvenida.m4a
 const bienvenidaRef = { current: null };
 const reproducirBienvenida = () => {
-  const a = new Audio("/audio/es/bienvenida/bienvenida.m4a");
-  bienvenidaRef.current = a;
-  a.play().catch(() => hablar("Hola. Soy SCIAT Peak State. Te acompaño en esta etapa. Vamos, tú puedes."));
+  bienvenidaRef.current = reproducirAudioUrl("/audio/es/bienvenida.m4a");
 };
 const detenerBienvenida = () => {
   if(bienvenidaRef.current) { bienvenidaRef.current.pause(); bienvenidaRef.current=null; }
@@ -246,14 +267,26 @@ function PantallaBienvenida({ onEntrar }) {
     const t1 = setTimeout(()=>setFase(1), 400);
     const t2 = setTimeout(()=>setFase(2), 1200);
     const t3 = setTimeout(()=>setFase(3), 2200);
-    const t4 = setTimeout(()=>reproducirBienvenida(), 800);
-    return ()=>{ [t1,t2,t3,t4].forEach(clearTimeout); detenerBienvenida(); };
+    return ()=>{ [t1,t2,t3].forEach(clearTimeout); detenerBienvenida(); };
   }, []);
 
+  const handleEntrar = () => {
+    reproducirBienvenida();
+    // Espera 11s (duración del audio) o navega al tocar ENTRAR de nuevo
+    // Por ahora navega inmediatamente — el audio sigue sonando en la siguiente pantalla
+    onEntrar();
+  };
+
   return (
-    <div style={{minHeight:"100vh",background:"#000",display:"flex",flexDirection:"column",
-      alignItems:"center",justifyContent:"center",padding:"40px 24px",textAlign:"center",
-      position:"relative",overflow:"hidden",colorScheme:"dark"}}>
+    <div style={{
+      position:"fixed", top:0, left:0, right:0, bottom:0,
+      width:"100vw", height:"100vh", height:"100dvh",
+      background:"#000",
+      display:"flex", flexDirection:"column",
+      alignItems:"center", justifyContent:"center",
+      padding:"40px 24px", textAlign:"center",
+      overflow:"hidden", colorScheme:"dark", zIndex:9999,
+    }}>
       <style>{`
         @keyframes pulseRing{0%,100%{transform:scale(0.95);opacity:0.6}50%{transform:scale(1.05);opacity:1}}
         @keyframes glowPulse{0%,100%{filter:drop-shadow(0 0 8px #00d4aa88)}50%{filter:drop-shadow(0 0 20px #00d4aacc)}}
@@ -319,7 +352,7 @@ function PantallaBienvenida({ onEntrar }) {
       {/* Botón ENTRAR */}
       <div style={{opacity:fase>=3?1:0,transform:fase>=3?"translateY(0)":"translateY(16px)",
         transition:"all 0.6s ease 0.3s",width:"100%",maxWidth:320}}>
-        <button onClick={()=>{ detenerBienvenida(); onEntrar(); }}
+        <button onClick={handleEntrar}
           style={{width:"100%",padding:"18px 24px",borderRadius:14,border:"none",
             background:"linear-gradient(135deg, #00d4aa, #0099aa)",
             color:"#0a0f1e",fontSize:16,fontWeight:700,cursor:"pointer",
@@ -845,14 +878,8 @@ function EjercicioActivo({ ejercicio, moduloId, onVolver }) {
   };
 
   useEffect(()=>{
-    if(paso===-1 && tieneAudio && audioOn) {
-      const t = setTimeout(()=>{
-        const a = new Audio(audioData.intro);
-        audioRef.current = a;
-        a.play().catch(()=>{});
-      }, 300);
-      return ()=>clearTimeout(t);
-    }
+    // Intro NO se reproduce automáticamente — requiere toque del usuario (Android)
+    // Se reproduce al tocar INICIAR EJERCICIO
   }, []);
 
   useEffect(()=>{ return ()=>{ clearInterval(timerRef.current); detenerAudio(); }; }, []);
@@ -861,18 +888,14 @@ function EjercicioActivo({ ejercicio, moduloId, onVolver }) {
     const duracion = ejercicio.pasos[numPaso].s + 2;
     setSegundos(duracion);
     setCorriendo(true);
-    if(tieneAudio && audioData.pasos[numPaso]) {
-      const a = new Audio(audioData.pasos[numPaso]);
-      audioRef.current = a;
-      if(audioOn) {
-        a.play().catch(()=>{});
-        a.onended = () => {
-          clearInterval(timerRef.current);
-          const sig = numPaso + 1;
-          if(sig < ejercicio.pasos.length) { setPaso(sig); iniciarPaso(sig); }
-          else { setCorriendo(false); setCompletado(true); }
-        };
-      }
+    if(tieneAudio && audioData.pasos[numPaso] && audioOn) {
+      const onEnded = () => {
+        clearInterval(timerRef.current);
+        const sig = numPaso + 1;
+        if(sig < ejercicio.pasos.length) { setPaso(sig); iniciarPaso(sig); }
+        else { setCorriendo(false); setCompletado(true); }
+      };
+      audioRef.current = reproducirAudioUrl(audioData.pasos[numPaso], onEnded);
     }
     clearInterval(timerRef.current);
     timerRef.current = setInterval(()=>{
@@ -891,7 +914,19 @@ function EjercicioActivo({ ejercicio, moduloId, onVolver }) {
     }, 1000);
   };
 
-  const handleIniciar = () => { detenerAudio(); setPaso(0); iniciarPaso(0); };
+  const handleIniciar = () => {
+    detenerAudio();
+    // Reproducir intro desde el toque del usuario (desbloquea Android)
+    if(tieneAudio && audioData.intro && audioOn) {
+      audioRef.current = reproducirAudioUrl(audioData.intro, ()=>{
+        // Cuando termina el intro, inicia paso 0
+        setPaso(0); iniciarPaso(0);
+      });
+      setPaso(-1); // Mantener en intro mientras suena
+    } else {
+      setPaso(0); iniciarPaso(0);
+    }
+  };
   const pausar = () => { clearInterval(timerRef.current); setCorriendo(false); detenerAudio(); };
   const reiniciar = () => {
     clearInterval(timerRef.current); detenerAudio(); detenerVoz();
@@ -1100,13 +1135,28 @@ export default function App() {
   };
 
   return (
-    <div style={{minHeight:"100vh",background:DS.bg,colorScheme:"dark",
-      fontFamily:"'DM Sans',sans-serif",display:"flex",flexDirection:"column",
-      alignItems:"center",padding:pantalla==="bienvenida"?"0":"24px 16px 40px"}}>
+    <div style={{
+      width:"100%", minHeight:"100vh", minHeight:"100dvh",
+      background:DS.bg, colorScheme:"dark",
+      fontFamily:"'DM Sans',sans-serif",
+      display:"flex", flexDirection:"column", alignItems:"center",
+      padding:pantalla==="bienvenida"?"0":"24px 16px 40px",
+      overflowX:"hidden",
+    }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap');
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;color-scheme:dark;}
-        html,body{background:#0a0f1e!important;color-scheme:dark;}
+        html,body,#root{
+          background:#0a0f1e!important;
+          color-scheme:dark;
+          width:100%;
+          max-width:100%;
+          min-height:100vh;
+          min-height:100dvh;
+          overflow-x:hidden;
+          margin:0;
+          padding:0;
+        }
         button{font-family:'DM Sans',sans-serif;}
         input,textarea,select{color-scheme:dark;}
       `}</style>
@@ -1114,8 +1164,8 @@ export default function App() {
       {pantalla==="bienvenida" && <PantallaBienvenida onEntrar={()=>ir("inicio")}/>}
 
       {pantalla!=="bienvenida" && (
-        <div style={{width:"100%",maxWidth:420,opacity:anim?1:0,
-          transform:anim?"translateY(0)":"translateY(12px)",transition:"all 0.25s ease"}}>
+        <div style={{width:"100%", maxWidth:480, opacity:anim?1:0,
+          transform:anim?"translateY(0)":"translateY(12px)", transition:"all 0.25s ease"}}>
           <Header pantalla={pantalla} onHome={()=>ir("inicio")}/>
           {pantalla==="inicio" && <PantallaInicio onIniciar={()=>ir("check")}/>}
           {pantalla==="check" && <PantallaCheck onCompletado={p=>{ setPerfil(p); ir("plan"); }}/>}
