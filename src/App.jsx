@@ -1111,7 +1111,7 @@ export default function App() {
         input,textarea,select{color-scheme:dark;}
       `}</style>
 
-      {pantalla==="bienvenida" && <PantallaBienvenida onEntrar={()=>ir("inicio")}/>} 
+      {pantalla==="bienvenida" && <PantallaBienvenida onEntrar={()=>ir("inicio")}/>}
 
       {pantalla!=="bienvenida" && (
         <div style={{width:"100%",maxWidth:420,opacity:anim?1:0,
