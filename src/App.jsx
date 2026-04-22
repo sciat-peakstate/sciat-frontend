@@ -241,12 +241,14 @@ const reproducirAudioUrl = (url, onEnded) => {
   try {
     const a = new Audio(url);
     a.preload = "auto";
-    if(onEnded) a.onended = onEnded;
-    a.onerror = () => {}; // silencioso si no existe
+    if(onEnded) {
+      a.onended = onEnded;
+      a.onerror = onEnded; // Si falla, avanza igual
+    }
     const p = a.play();
-    if(p) p.catch(()=>{});
+    if(p) p.catch(()=>{ if(onEnded) onEnded(); });
     return a;
-  } catch(e) { return null; }
+  } catch(e) { if(onEnded) onEnded(); return null; }
 };
 
 // Audio bienvenida — public/audio/es/bienvenida.m4a
@@ -910,9 +912,20 @@ function EjercicioActivo({ ejercicio, moduloId, onVolver }) {
   const handleIniciar = () => {
     detenerAudio();
     if(tieneAudio && audioData.intro && audioOn) {
-      audioRef.current = reproducirAudioUrl(audioData.intro);
+      let avanzado = false;
+      const avanzar = () => {
+        if(avanzado) return;
+        avanzado = true;
+        setPaso(0); iniciarPaso(0);
+      };
+      audioRef.current = reproducirAudioUrl(audioData.intro, avanzar);
+      setPaso(-1);
+      // Seguridad: si el audio no termina en introDur+3s, avanza igual
+      const seguridad = (audioData.introDur || 15) + 3;
+      setTimeout(avanzar, seguridad * 1000);
+    } else {
+      setPaso(0); iniciarPaso(0);
     }
-    setPaso(0); iniciarPaso(0);
   };
   const pausar = () => { clearInterval(timerRef.current); setCorriendo(false); detenerAudio(); };
   const reiniciar = () => {
@@ -1151,8 +1164,9 @@ export default function App() {
       {pantalla==="bienvenida" && <PantallaBienvenida onEntrar={()=>ir("inicio")}/>}
 
       {pantalla!=="bienvenida" && (
-        <div style={{width:"100%", maxWidth:480, opacity:anim?1:0,
-          transform:anim?"translateY(0)":"translateY(12px)", transition:"all 0.25s ease"}}>
+        <div style={{width:"100%", maxWidth:"100%", opacity:anim?1:0,
+          transform:anim?"translateY(0)":"translateY(12px)", transition:"all 0.25s ease",
+          padding:"24px 16px 40px"}}>
           <Header pantalla={pantalla} onHome={()=>ir("inicio")}/>
           {pantalla==="inicio" && <PantallaInicio onIniciar={()=>ir("check")}/>}
           {pantalla==="check" && <PantallaCheck onCompletado={p=>{ setPerfil(p); ir("plan"); }}/>}
