@@ -915,20 +915,31 @@ function EjercicioActivo({ ejercicio, moduloId, onVolver }) {
     const duracion = ejercicio.pasos[numPaso].s + 2;
     setSegundos(duracion);
     setCorriendo(true);
-    if(tieneAudio && audioData.pasos[numPaso] && audioOn) {
-      audioRef.current = reproducirAudioUrl(audioData.pasos[numPaso]);
-    }
     clearInterval(timerRef.current);
-    timerRef.current = setInterval(()=>{
-      setSegundos(s=>{
-        if(s<=1) {
+
+    if (tieneAudio && audioData.pasos[numPaso] && audioOn) {
+      audioRef.current = reproducirAudioUrl(
+        audioData.pasos[numPaso],
+        () => {
+          const sig = numPaso + 1;
+          if (sig < ejercicio.pasos.length) {
+            setPaso(sig);
+            iniciarPaso(sig);
+          } else {
+            setCorriendo(false);
+            setCompletado(true);
+          }
+        }
+      );
+    }
+
+    timerRef.current = setInterval(() => {
+      setSegundos(s => {
+        if (s <= 1) {
           clearInterval(timerRef.current);
-          const sig = numPaso+1;
-          if(sig<ejercicio.pasos.length) { setPaso(sig); iniciarPaso(sig); }
-          else { setCorriendo(false); setCompletado(true); }
           return 0;
         }
-        return s-1;
+        return s - 1;
       });
     }, 1000);
   };
