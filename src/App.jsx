@@ -40,7 +40,6 @@ const AUDIO = {
   A3:{ intro:A+"A3-intro-activacion.m4a", introDur:8,
     pasos:[A+"A3-p1-activacion-inicial.m4a",A+"A3-p2-respiracion-activa.m4a",
            A+"A3-p3-anclaje-mental.m4a",A+"A3-p4-activacion-fisica.m4a",A+"A3-p5-cierre.m4a"] },
-  // Módulo B — intro + pasos desde p2
   B1:{ intro:B+"B1-intro-restructuracion-cogniti.m4a", introDur:12,
     pasos:[B+"B1-p1-identifica-el-pensamiento.m4a",B+"B1-p2-escribelo.m4a",
            B+"B1-p3-el-cuestionamiento.m4a",B+"B1-p4-la-evidencia.m4a",
@@ -52,7 +51,6 @@ const AUDIO = {
     pasos:[B+"B3-p2-cierra-los-ojos.m4a",B+"B3-p3-tu-cuerpo.m4a",
            B+"B3-p4-la-ejecucion.m4a",B+"B3-p5-el-momento-dificil.m4a",
            B+"B3-p6-el-cierre.m4a",B+"B3-p7-regresa.m4a"] },
-  // Módulo C — intro + pasos desde p2
   C1:{ intro:C+"C1-intro-construccion-de-confia.m4a", introDur:13,
     pasos:[C+"C1-p2-logro-reciente.m4a",C+"C1-p3-logro-dificil.m4a",
            C+"C1-p4-logro-de-orgullo.m4a",C+"C1-p5-el-patron.m4a",C+"C1-p6-cierre.m4a"] },
@@ -62,7 +60,6 @@ const AUDIO = {
   C3:{ intro:C+"C3-intro-dialogo-interno-positiv.m4a", introDur:12,
     pasos:[C+"C3-p2-que-te-dices.m4a",C+"C3-p3-la-transformacion.m4a",
            C+"C3-p4-tu-frase.m4a",C+"C3-p5-ditela.m4a",C+"C3-p6-cierre.m4a"] },
-  // ─── MÓDULO D — D1:p2,p4,p6 / D2:p2-p5 / D3:p2,p4,p6 ─────────────────────
   D1:{ intro:D+"D1-intro-foco-y-concentracion.m4a", introDur:15,
     pasos:[D+"D1-p2-el-circulo.m4a", D+"D1-p4-tecnica321.m4a", D+"D1-p6-cierre.m4a"] },
   D2:{ intro:D+"D2-intro-calentamiento-mental.m4a", introDur:13,
@@ -70,7 +67,6 @@ const AUDIO = {
            D+"D2-p4-anticipa.m4a", D+"D2-p5-cierre.m4a"] },
   D3:{ intro:D+"D3-intro-control-del-momento-presente.m4a", introDur:15,
     pasos:[D+"D3-p2-el-ancla.m4a", D+"D3-p4-la-respuesta.m4a", D+"D3-p6-cierre.m4a"] },
-  // ─── MÓDULO E — intro + p1,p2,p3... ─────────────────────────────────────────
   E1:{ intro:E+"E1-intro-seguimiento-y-evolucion.m4a", introDur:14,
     pasos:[E+"E1-p1-lo-que-funciono.m4a", E+"E1-p2-lo-que-mejorar.m4a",
            E+"E1-p3-aprendizaje.m4a", E+"E1-p4-cierre.m4a"] },
@@ -234,16 +230,14 @@ const hablar = (texto, rate=0.88) => {
 };
 const detenerVoz = () => { if(window.speechSynthesis) window.speechSynthesis.cancel(); };
 
-// ─── REPRODUCTOR UNIVERSAL — funciona en iOS, Android Chrome, Desktop ─────────
-// Android Chrome bloquea audio hasta primera interacción del usuario.
-// La solución: reproducir SIEMPRE desde un handler onClick, nunca automáticamente.
+// ─── REPRODUCTOR UNIVERSAL ────────────────────────────────────────────────────
 const reproducirAudioUrl = (url, onEnded) => {
   try {
     const a = new Audio(url);
     a.preload = "auto";
     if(onEnded) {
       a.onended = onEnded;
-      a.onerror = onEnded; // Si falla, avanza igual
+      a.onerror = onEnded;
     }
     const p = a.play();
     if(p) p.catch(()=>{ if(onEnded) onEnded(); });
@@ -251,11 +245,22 @@ const reproducirAudioUrl = (url, onEnded) => {
   } catch(e) { if(onEnded) onEnded(); return null; }
 };
 
-// Audio bienvenida — public/audio/es/bienvenida.m4a
-const bienvenidaRef = { current: null };
-const reproducirBienvenida = () => {
-  bienvenidaRef.current = reproducirAudioUrl("/audio/es/bienvenida.m4a");
+// ─── DESBLOQUEO DE AUDIO (captura primer toque para Android Chrome) ───────────
+// Android Chrome bloquea audio hasta la primera interacción del usuario.
+// Este listener captura cualquier toque en cualquier parte de la pantalla
+// y "despierta" el sistema de audio del navegador.
+let audioDesbloqueado = false;
+const desbloquearAudio = () => {
+  if (audioDesbloqueado) return;
+  audioDesbloqueado = true;
+  const s = new Audio();
+  s.play().catch(() => {});
 };
+document.addEventListener("touchstart", desbloquearAudio, { once: true });
+document.addEventListener("click",      desbloquearAudio, { once: true });
+
+// ─── AUDIO BIENVENIDA ─────────────────────────────────────────────────────────
+const bienvenidaRef = { current: null };
 const detenerBienvenida = () => {
   if(bienvenidaRef.current) { bienvenidaRef.current.pause(); bienvenidaRef.current=null; }
   detenerVoz();
@@ -264,18 +269,43 @@ const detenerBienvenida = () => {
 // ─── PANTALLA BIENVENIDA CON ANIMACIÓN ───────────────────────────────────────
 function PantallaBienvenida({ onEntrar }) {
   const [fase, setFase] = useState(0);
+  // Ref para evitar que onEntrar() se llame dos veces
+  // (ej: audio termina justo cuando el usuario toca ENTRAR)
+  const entradoRef = useRef(false);
 
   useEffect(() => {
-    const t1 = setTimeout(()=>setFase(1), 400);
-    const t2 = setTimeout(()=>setFase(2), 1200);
-    const t3 = setTimeout(()=>setFase(3), 2200);
-    return ()=>{ [t1,t2,t3].forEach(clearTimeout); detenerBienvenida(); };
+    const t1 = setTimeout(() => setFase(1), 400);
+    const t2 = setTimeout(() => setFase(2), 1200);
+    const t3 = setTimeout(() => setFase(3), 2200);
+
+    // Audio automático: arranca a los 2.5s (cuando la animación ya es visible)
+    // Al terminar, avanza automáticamente — accesible para usuarios ciegos
+    const tAudio = setTimeout(() => {
+      bienvenidaRef.current = reproducirAudioUrl(
+        "/audio/es/bienvenida.m4a",
+        () => {
+          // onEnded → avance automático al terminar el audio
+          if (!entradoRef.current) {
+            entradoRef.current = true;
+            onEntrar();
+          }
+        }
+      );
+    }, 2500);
+
+    // IMPORTANTE: NO llamar detenerBienvenida() en el cleanup.
+    // Si el componente se desmonta porque onEntrar() navegó,
+    // el audio debe seguir sonando en la pantalla siguiente.
+    return () => {
+      [t1, t2, t3, tAudio].forEach(clearTimeout);
+    };
   }, []);
 
+  // Botón manual: permite saltar el audio (usuarios que no quieren esperar)
   const handleEntrar = () => {
-    reproducirBienvenida();
-    // Espera 11s (duración del audio) o navega al tocar ENTRAR de nuevo
-    // Por ahora navega inmediatamente — el audio sigue sonando en la siguiente pantalla
+    if (entradoRef.current) return;
+    entradoRef.current = true;
+    detenerBienvenida();
     onEntrar();
   };
 
@@ -879,11 +909,6 @@ function EjercicioActivo({ ejercicio, moduloId, onVolver }) {
     if(audioRef.current) { audioRef.current.pause(); audioRef.current=null; }
   };
 
-  useEffect(()=>{
-    // Intro NO se reproduce automáticamente — requiere toque del usuario (Android)
-    // Se reproduce al tocar INICIAR EJERCICIO
-  }, []);
-
   useEffect(()=>{ return ()=>{ clearInterval(timerRef.current); detenerAudio(); }; }, []);
 
   const iniciarPaso = (numPaso) => {
@@ -898,7 +923,6 @@ function EjercicioActivo({ ejercicio, moduloId, onVolver }) {
       setSegundos(s=>{
         if(s<=1) {
           clearInterval(timerRef.current);
-          // El cronómetro SIEMPRE avanza — no depende de que el audio termine
           const sig = numPaso+1;
           if(sig<ejercicio.pasos.length) { setPaso(sig); iniciarPaso(sig); }
           else { setCorriendo(false); setCompletado(true); }
@@ -920,7 +944,6 @@ function EjercicioActivo({ ejercicio, moduloId, onVolver }) {
       };
       audioRef.current = reproducirAudioUrl(audioData.intro, avanzar);
       setPaso(-1);
-      // Seguridad: si el audio no termina en introDur+3s, avanza igual
       const seguridad = (audioData.introDur || 15) + 3;
       setTimeout(avanzar, seguridad * 1000);
     } else {
@@ -932,7 +955,7 @@ function EjercicioActivo({ ejercicio, moduloId, onVolver }) {
     clearInterval(timerRef.current); detenerAudio(); detenerVoz();
     setPaso(-1); setSegundos(0); setCorriendo(false); setCompletado(false);
     if(tieneAudio && audioOn) {
-      const t = setTimeout(()=>{ const a=new Audio(audioData.intro); audioRef.current=a; a.play().catch(()=>{}); },300);
+      setTimeout(()=>{ const a=new Audio(audioData.intro); audioRef.current=a; a.play().catch(()=>{}); },300);
     }
   };
 
