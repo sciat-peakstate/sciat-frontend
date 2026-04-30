@@ -260,7 +260,7 @@ document.addEventListener("touchstart", desbloquearAudio, { once: true });
 document.addEventListener("click",      desbloquearAudio, { once: true });
 
 // ─── AUDIO BIENVENIDA ─────────────────────────────────────────────────────────
-const bienvenidaRef = useRef(null); 
+const bienvenidaRef = { current: null }; 
 const detenerBienvenida = () => {
   if(bienvenidaRef.current) { bienvenidaRef.current.pause(); bienvenidaRef.current=null; }
   detenerVoz();
