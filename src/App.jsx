@@ -291,7 +291,7 @@ function PantallaBienvenida({ onEntrar }) {
           }
         }
       );
-    }, 2500);
+    }, 11000);
 
     // IMPORTANTE: NO llamar detenerBienvenida() en el cleanup.
     // Si el componente se desmonta porque onEntrar() navegó,
