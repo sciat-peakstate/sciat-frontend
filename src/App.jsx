@@ -454,6 +454,13 @@ function Header({ pantalla, onHome }) {
 
 // ─── PANTALLA INICIO ──────────────────────────────────────────────────────────
 function PantallaInicio({ onIniciar }) {
+  useEffect(() => {
+    const t = setTimeout(() => hablar(
+      "Rinde mejor bajo presión. Toca Comenzar Check Inicial cuando estés listo."
+    ), 800);
+    return () => clearTimeout(t);
+  }, []);
+
   return (
     <div>
       <div style={{background:`linear-gradient(135deg, ${DS.card}, #0d1520)`,
