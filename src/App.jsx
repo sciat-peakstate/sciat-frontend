@@ -260,7 +260,7 @@ document.addEventListener("touchstart", desbloquearAudio, { once: true });
 document.addEventListener("click",      desbloquearAudio, { once: true });
 
 // ─── AUDIO BIENVENIDA ─────────────────────────────────────────────────────────
-const bienvenidaRef = { current: null }; 
+const bienvenidaRef = { current: null };
 const detenerBienvenida = () => {
   if(bienvenidaRef.current) { bienvenidaRef.current.pause(); bienvenidaRef.current=null; }
   detenerVoz();
@@ -291,7 +291,7 @@ function PantallaBienvenida({ onEntrar }) {
           }
         }
       );
-    }, 11000);
+    }, 2500);
 
     // IMPORTANTE: NO llamar detenerBienvenida() en el cleanup.
     // Si el componente se desmonta porque onEntrar() navegó,
@@ -915,31 +915,20 @@ function EjercicioActivo({ ejercicio, moduloId, onVolver }) {
     const duracion = ejercicio.pasos[numPaso].s + 2;
     setSegundos(duracion);
     setCorriendo(true);
-    clearInterval(timerRef.current);
-
-    if (tieneAudio && audioData.pasos[numPaso] && audioOn) {
-      audioRef.current = reproducirAudioUrl(
-        audioData.pasos[numPaso],
-        () => {
-          const sig = numPaso + 1;
-          if (sig < ejercicio.pasos.length) {
-            setPaso(sig);
-            iniciarPaso(sig);
-          } else {
-            setCorriendo(false);
-            setCompletado(true);
-          }
-        }
-      );
+    if(tieneAudio && audioData.pasos[numPaso] && audioOn) {
+      audioRef.current = reproducirAudioUrl(audioData.pasos[numPaso]);
     }
-
-    timerRef.current = setInterval(() => {
-      setSegundos(s => {
-        if (s <= 1) {
+    clearInterval(timerRef.current);
+    timerRef.current = setInterval(()=>{
+      setSegundos(s=>{
+        if(s<=1) {
           clearInterval(timerRef.current);
+          const sig = numPaso+1;
+          if(sig<ejercicio.pasos.length) { setPaso(sig); iniciarPaso(sig); }
+          else { setCorriendo(false); setCompletado(true); }
           return 0;
         }
-        return s - 1;
+        return s-1;
       });
     }, 1000);
   };
