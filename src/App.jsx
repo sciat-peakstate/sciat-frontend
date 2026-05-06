@@ -278,7 +278,7 @@ function PantallaBienvenida({ onEntrar }) {
     const t2 = setTimeout(() => setFase(2), 1200);
     const t3 = setTimeout(() => setFase(3), 2200);
 
-    // Audio automático: arranca a los 2.5s (cuando la animación ya es visible)
+    // Audio automático: arranca a los 4.5s (cuando la animación ya es visible)
     // Al terminar, avanza automáticamente — accesible para usuarios ciegos
     const tAudio = setTimeout(() => {
       bienvenidaRef.current = reproducirAudioUrl(
@@ -291,7 +291,7 @@ function PantallaBienvenida({ onEntrar }) {
           }
         }
       );
-    }, 2500);
+    }, 4500);
 
     // IMPORTANTE: NO llamar detenerBienvenida() en el cleanup.
     // Si el componente se desmonta porque onEntrar() navegó,
