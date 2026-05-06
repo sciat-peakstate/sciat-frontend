@@ -479,7 +479,7 @@ function PantallaInicio({ onIniciar }) {
         <p style={{fontSize:14,color:DS.inkMuted,fontFamily:"'DM Sans',sans-serif",
           lineHeight:1.65,marginBottom:20,position:"relative"}}>
           Herramientas de alto rendimiento adaptadas a tu etapa.
-          Deporte, academia u organización — el método es el mismo.
+          Deporte, academia u organización.
         </p>
         <div style={{marginBottom:24,position:"relative"}}>
           {["Evaluación por etapa de presión","Check inicial de estado","Acompañamiento post actividad"].map((f,i)=>(
