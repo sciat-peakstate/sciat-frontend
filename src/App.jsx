@@ -129,14 +129,15 @@ const EJERCICIOS = {
         { t:"Practica esta secuencia hasta automatizarla. Es una habilidad entrenable.", s:14 },
       ]},
     { id:"B3", icono:"🎬", titulo:"Visualización de Ejecución", dur:"7 min", desc:"Ensaya el proceso, no el resultado.",
-      pasos:[
-        { t:"Cierra los ojos. Lleva tu mente al momento justo antes de tu etapa.", s:13 },
-        { t:"¿Cómo se siente tu cuerpo? Tu postura, tu respiración. Sereno y activado.", s:15 },
-        { t:"Ejecuta en tu mente paso a paso. Tu primera acción. Con precisión y calma.", s:15 },
-        { t:"Imagina que algo sale diferente. ¿Cómo respondes? Visualiza tu recuperación.", s:14 },
-        { t:"El último paso del proceso hecho con todo lo que tienes. Eso es suficiente.", s:14 },
-        { t:"Regresa. Abre los ojos. Tu cerebro acaba de ensayar. Cada repetición lo hace más familiar.", s:13 },
-      ]},
+  pasos:[
+    { t:"Cierra los ojos. Lleva tu mente al momento justo antes de tu etapa.", s:13 },
+    { t:"¿Cómo se siente tu cuerpo? Tu postura, tu respiración. Sereno y activado.", s:15 },
+    { t:"Ejecuta en tu mente paso a paso. Tu primera acción. Con precisión y calma.", s:15 },
+    { t:"Imagina que algo sale diferente. ¿Cómo respondes? Visualiza tu recuperación.", s:14 },
+    { t:"El último paso del proceso hecho con todo lo que tienes. Eso es suficiente.", s:14 },
+    { t:"Regresa. Abre los ojos. Tu cerebro acaba de ensayar. Cada repetición lo hace más familiar.", s:13 },
+    { t:"Regresa completamente. Respira. Llevas ese ensayo contigo.", s:10 },
+  ]},
   ],
   C:[
     { id:"C1", icono:"🏆", titulo:"Registro de Logros Previos", dur:"6 min", desc:"Tu historial de éxito es tu combustible más poderoso.",
