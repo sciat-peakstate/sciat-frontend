@@ -136,7 +136,7 @@ const EJERCICIOS = {
     { t:"Imagina que algo sale diferente. ¿Cómo respondes? Visualiza tu recuperación.", s:14 },
     { t:"El último paso del proceso hecho con todo lo que tienes. Eso es suficiente.", s:14 },
     { t:"Regresa. Abre los ojos. Tu cerebro acaba de ensayar. Cada repetición lo hace más familiar.", s:13 },
-    { t:"Regresa completamente. Respira. Llevas ese ensayo contigo.", s:10 },
+    { t:"Regresa completamente. Respira. Llevas ese ensayo contigo.", s:13 },
   ]},
   ],
   C:[
