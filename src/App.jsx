@@ -157,13 +157,14 @@ const EJERCICIOS = {
         { t:"Practica esta secuencia antes de cada etapa. Con el tiempo se activa sola.", s:12 },
       ]},
     { id:"C3", icono:"💬", titulo:"Diálogo Interno Positivo", dur:"4 min", desc:"Construye tu voz interna de alto rendimiento.",
-      pasos:[
-        { t:"¿Qué palabras aparecen en tu mente cuando estás bajo presión real?", s:10 },
-        { t:"Transforma ese pensamiento. De no puedo a puedes manejarlo.", s:14 },
-        { t:"Piensa en una frase corta en segunda persona que puedas creer bajo presión.", s:12 },
-        { t:"Di tu frase ahora con toda la intensidad que puedas.", s:12 },
-        { t:"Repite esta frase en cada momento de presión. La repetición la convierte en reflejo.", s:12 },
-      ]},
+  pasos:[
+    { t:"¿Qué palabras aparecen en tu mente cuando estás bajo presión real?", s:10 },
+    { t:"Transforma ese pensamiento. De no puedo a puedes manejarlo.", s:14 },
+    { t:"Piensa en una frase corta en segunda persona que puedas creer bajo presión.", s:12 },
+    { t:"Di tu frase ahora con toda la intensidad que puedas.", s:12 },
+    { t:"Repite esta frase en cada momento de presión. La repetición la convierte en reflejo.", s:12 },
+    { t:"Cierra este momento. Llevas esa frase contigo a tu etapa.", s:12 },
+  ]},
   ],
   D:[
     { id:"D1", icono:"🎯", titulo:"Atención Selectiva", dur:"4 min", desc:"Filtra el ruido y amplifica la señal que importa.",
