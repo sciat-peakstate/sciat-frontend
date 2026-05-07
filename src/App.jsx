@@ -129,6 +129,7 @@ const EJERCICIOS = {
         { t:"Practica esta secuencia hasta automatizarla. Es una habilidad entrenable.", s:14 },
       ]},
     { id:"B3", icono:"🎬", titulo:"Visualización de Ejecución", dur:"7 min", desc:"Ensaya el proceso, no el resultado.",
+  intro:{ t:"La mayoría visualiza ganar. Nosotros visualizamos ejecutar. El proceso — no el resultado. Eso es lo que entrena el cerebro.", s:15 },
   pasos:[
     { t:"Cierra los ojos. Lleva tu mente al momento justo antes de tu etapa.", s:13 },
     { t:"¿Cómo se siente tu cuerpo? Tu postura, tu respiración. Sereno y activado.", s:15 },
