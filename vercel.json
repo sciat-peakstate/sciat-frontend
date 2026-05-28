@@ -3,7 +3,7 @@
     { "source": "/(.*)", "destination": "/" }
   ]
 }
-EOF 
+DONE 
 git add vercel.json
-git commit -m "Corrige vercel.json para React"
+git commit -m "Fix vercel.json limpio"
 git push origin main --force 
